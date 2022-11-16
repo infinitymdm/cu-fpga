@@ -2,7 +2,7 @@
 SHELL = /bin/sh
 FPGA_PKG = cb132
 FPGA_TYPE = hx8k
-PCF = cu.pcf
+PCF = constraints/cu.pcf
 
 # included modules
 ADD_SRC = main.v

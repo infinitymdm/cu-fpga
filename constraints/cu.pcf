@@ -59,7 +59,7 @@ set_io io_dip_a[3] D12  # BB36, IOR_160
 set_io io_dip_a[4] E11  # BB34, IOR_146
 set_io io_dip_a[5] F11  # BB33, IOR_144
 set_io io_dip_a[6] F12  # BB31, IOR_137
-set_io io_dip_a[7] H11  # BB30, IOR_128
+set_io io_dip_a[7] G12  # BB30, IOR_129
 
 set_io io_dip_b[0] C5   # AB28, IOT_212
 set_io io_dip_b[1] A5   # AB27, IOT_208
@@ -79,9 +79,11 @@ set_io io_dip_c[5] D4   # AB33, IOL_8_P
 set_io io_dip_c[6] C4   # AB31, IOT_221
 set_io io_dip_c[7] D5   # AB30, IOT_211
 
-# D-pad buttons TODO
-# set_io io_btn_up
-# set_io io_btn_down
-# set_io io_btn_left
-# set_io io_btn_right
-# set_io io_btn_center
+# D-pad buttons
+set_io io_btn_up G11    # BB28, IOR_136
+set_io io_btn_down H12  # BB23, IOR_120
+set_io io_btn_left J12  # BB24, IOR_118
+set_io io_btn_right P2  # CB49, IOB_56
+set_io io_btn_ctr H11   # BB27, IOR_128
+
+# 7-segment displays TODO
