@@ -10,7 +10,7 @@ SRC = main.sv
 main: main.rpt main.bin
 
 main.json: ${SRC}
-	yosys -ql main-yosys.log -p 'synth_ice40 -top top -json $@' ${SRC}
+	yosys -ql main-yosys.log -p 'synth_ice40 -top main -json $@' ${SRC}
 
 main.asc: main.json
 	nextpnr-ice40 --${FPGA_TYPE} --package ${FPGA_PKG} --json $< --pcf ${PCF} --asc $@

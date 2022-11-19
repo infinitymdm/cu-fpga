@@ -87,16 +87,16 @@ set_io io_btn_right P2  # CB49, IOB_56
 set_io io_btn_ctr H11   # BB27, IOR_128
 
 # 7-segment displays
-set_io io_7seg_select[0] G3    # AB9, IOL_13_P
-set_io io_7seg_select[1] G1    # AB8, IOL_13_N
-set_io io_7seg_select[2] H1    # AB42, IOL_14_P
-set_io io_7seg_select[3] H3    # AB43, IOL_14_N
+set_io io_7seg_select[0] G3 # AB9, IOL_13_P
+set_io io_7seg_select[1] G1 # AB8, IOL_13_N
+set_io io_7seg_select[2] H1 # AB42, IOL_14_P
+set_io io_7seg_select[3] H3 # AB43, IOL_14_N
 
-set_io io_7seg[0] J1     # AB5, IOL_12_N
-set_io io_7seg[1] J3     # AB6, IOL_12_P
-set_io io_7seg[2] N1     # AB48, IOL_25_P
-set_io io_7seg[3] K4     # AB46, IOL_18_N
-set_io io_7seg[4] K3     # AB45, IOL_18_P
-set_io io_7seg[5] L1     # AB3, IOL_23_P
-set_io io_7seg[6] M1     # AB2, IOL_23_N
-set_io io_7seg[7] P1    # AB49, IOL_25_N
+set_io io_7seg[6] J1        # AB5, IOL_12_N
+set_io io_7seg[5] J3        # AB6, IOL_12_P
+set_io io_7seg[4] N1        # AB48, IOL_25_P
+set_io io_7seg[3] K4        # AB46, IOL_18_N
+set_io io_7seg[2] K3        # AB45, IOL_18_P
+set_io io_7seg[1] L1        # AB3, IOL_23_P
+set_io io_7seg[0] M1        # AB2, IOL_23_N
+set_io io_7seg[7] P1        # AB49, IOL_25_N
