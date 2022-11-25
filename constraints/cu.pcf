@@ -1,8 +1,7 @@
 ## Alchitry CU
 
 # Clock
-set_io clk P7
-set_io rst_n P8
+set_io cu_clk P7
 
 # Onboard LEDs
 set_io led[0] J11
