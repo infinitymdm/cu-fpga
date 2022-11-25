@@ -9,23 +9,26 @@ module main (input logic [7:0] io_dip_a,
              output logic [3:0] io_7seg_select,
              output logic [7:0] led,
                                 io_7seg);
-    logic slow_clk;
-    divide_by_1m c(cu_clk, slow_clk);
+    logic clk;
+    divide_by_1m clock_divider(cu_clk, clk);
 
     logic [3:0] data;
-    decimal_counter seconds(slow_clk, io_dip_a[7], ~btn_reset, data);
+    logic carry;
+    decimal_counter seconds(clk, io_dip_a[7], ~btn_reset, data, carry);
 
     seven_seg_select_decoder select_display(io_dip_a[1:0], io_7seg_select);
-    seven_seg_decoder display(data, io_7seg_select, io_7seg);
-    assign led = io_7seg;
+    seven_seg_decoder display(data, 0, io_7seg);
+    assign led[0] = carry;
 endmodule
 
 module decimal_counter (input logic clk, dec, reset,
-                        output logic [3:0] data);
+                        output logic [3:0] data,
+                        output logic carry);
     // decimal_counter is a Moore FSM which counts up once each time
     // clk is asserted. dec can be asserted to decrease by 1 
     // synchronously, or reset can be asserted to set to 0 
     // asynchronously.
+    // Also provides a carry output for cascading with other counters.
 
     typedef enum logic [4:0] {S0, S1, S2, S3, S4, S5, S6, S7, S8, S9} statetype;
     statetype state, nextstate;
@@ -70,6 +73,7 @@ module decimal_counter (input logic clk, dec, reset,
             S9: data = 4'd9;
             default: data = 4'd0;
         endcase
+        carry = (state == S9) & (nextstate == S0);
     end
 endmodule
 
