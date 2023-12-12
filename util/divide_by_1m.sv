@@ -3,7 +3,7 @@ module divide_by_1m (input logic clk,
     logic [26:0] counter;
 
     always @(posedge clk) begin
-        if (counter == 'd100_000_000) begin
+        if (counter == 'd1000000) begin
             out_clk <= 1;
             counter <= 'b0;
         end

@@ -5,7 +5,7 @@ PCF = constraints/cu.pcf
 TOP = main
 
 # included modules
-SRC = main.sv util/*
+SRC = main.sv util/*.sv rv32/*.sv
 
 main: main.rpt main.bin
 
@@ -28,7 +28,7 @@ upload: main.bin
 	iceprog $<
 
 main.vvp:
-	iverilog -g2012 -o main.vvp main.sv
+	iverilog -g2012 -o main.vvp ${SRC}
 
 main.vcd: main.vvp
 	vvp main.vvp
