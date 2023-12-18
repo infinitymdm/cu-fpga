@@ -7,36 +7,22 @@ TOP = main
 # included modules
 SRC = main.sv util/*.sv rv32/*.sv
 
-main: main.rpt main.bin
+main: synth
 
-main.json: ${SRC}
-	yosys -ql main-yosys.log -p 'synth_ice40 -top ${TOP} -json $@' ${SRC}
+synth: ${SRC}
+	yosys -q -p 'synth_ice40 -top ${TOP} -json main.json' ${SRC}
+	nextpnr-ice40 --${FPGA_TYPE} --package ${FPGA_PKG} --json main.json --pcf ${PCF} --asc main.asc
+	icetime -d ${FPGA_TYPE} -mtr main.rpt main.asc
+	icepack main.asc main.bin
 
-main.asc: main.json
-	nextpnr-ice40 --${FPGA_TYPE} --package ${FPGA_PKG} --json $< --pcf ${PCF} --asc $@
+upload: synth
+	iceprog main.bin
 
-main.rpt: main.asc
-	icetime -d ${FPGA_TYPE} -mtr $@ $<
-
-main.bin: main.asc
-	icepack $< $@
-
-gui: main.json
-	nextpnr-ice40 --gui --${FPGA_TYPE} --package ${FPGA_PKG} --json $< --pcf ${PCF} --asc main.asc
-
-upload: main.bin
-	iceprog $<
-
-main.vvp:
+sim: ${SRC}
 	iverilog -g2012 -o main.vvp ${SRC}
-
-main.vcd: main.vvp
 	vvp main.vvp
 
-sim: main.vcd
-	gtkwave tb_main.vcd
-
-dot: 
+dot: ${SRC}
 	yosys \
 		-p "read_verilog -sv ${SRC}" \
 		-p "hierarchy -check -top ${TOP}" \
@@ -44,7 +30,7 @@ dot:
 		-p "show -prefix ${TOP} -format dot ${TOP}"
 	dot -Tpng ${TOP}.dot -o ${TOP}.png
 
-all: main
+all: synth sim
 
 clean:
 	rm -f *.json *.asc *.rpt *.bin *yosys.log
