@@ -11,7 +11,7 @@ module regfile #(parameter N = 5) (
 
     logic [31:0] rf[2**N-1:0];
 
-    assign rf[0] = 32'b0;
+    //assign rf[0] = 32'b0;
 
     // Read two ports combinationally
     always_comb begin
