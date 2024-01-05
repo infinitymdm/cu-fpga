@@ -22,11 +22,6 @@ synth top:
 upload top: (synth top)
     iceprog {{device}}.bin
 
-sim top: (synth top)
-    # Consider switching to verilator
-    iverilog -g2012 -o {{device}}.vvp {{sources}}
-    vvp {{device}}.vvp
-
 draw top:
     {{yosys}} -q \
         -p 'plugin -i systemverilog' \
