@@ -10,19 +10,26 @@ yosys := synlig_dir + "/yosys"
 constraints := `find constraints -name "*.pcf" | tr '\n' ' '`
 sources := `find src -name "*.sv" | tr '\n' ' '`
 
-synth top:
+default: pnr
+
+synth top="main":
     {{yosys}} -q \
         -p 'plugin -i systemverilog' \
         -p 'read_systemverilog {{sources}}' \
         -p 'synth_ice40 -top {{top}} -json {{device}}.json'
+
+pnr top="main": (synth top)
     nextpnr-ice40 --{{dev_family}} --package {{dev_model}} --json {{device}}.json --pcf {{constraints}} --asc {{device}}.asc
     icetime -d {{dev_family}} -mtr {{device}}.rpt {{device}}.asc
     icepack {{device}}.asc {{device}}.bin
 
-upload top: (synth top)
-    iceprog {{device}}.bin
+pnr-gui top="main": (synth top)
+    nextpnr-ice40 --gui --{{dev_family}} --package {{dev_model}} --json {{device}}.json --pcf {{constraints}} --asc {{device}}.asc
 
-draw top:
+upload:
+    iceprog {{device}}.bin # Equivalent to `openFPGALoader -b ice40_generic {{device}}.bin`
+
+draw top="main":
     {{yosys}} -q \
         -p 'plugin -i systemverilog' \
         -p 'read_systemverilog {{sources}}' \
@@ -30,6 +37,10 @@ draw top:
         -p 'proc' \
         -p 'show -prefix {{top}} -format dot {{top}}'
     dot -Tpng {{top}}.dot -o {{top}}.png
+
+sim top +SOURCEFILES: (synth top)
+    iverilog -g2012 -o {{device}}_{{top}}.vvp {{SOURCEFILES}} # Consider switching to verilator
+    vvp {{device}}_{{top}}.vvp
 
 clean:
     rm -f *.json *.asc *.rpt *.bin *.dot *.png
