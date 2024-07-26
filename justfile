@@ -8,6 +8,7 @@ constraints := `find constraints -name "*.pcf" | tr '\n' ' '`
 sources := `find src -name "*.sv" | tr '\n' ' '`
 
 build_dir := 'build'
+tb_dir := 'tb'
 
 prep:
     mkdir -p {{build_dir}}
@@ -23,9 +24,10 @@ pnr top="main": (synth top)
 upload top="main": (pnr top)
     iceprog {{build_dir}}/{{dev_name}}_{{top}}.bin
 
-# TODO sim with verilator
-sim top: prep
-    verilator --top {{top}} --cc {{sources}} --Mdir {{build_dir}}
+sim top="main": prep
+    verilator --trace --top {{top}} --cc {{sources}} --Mdir {{build_dir}} --exe {{tb_dir}}/tb_{{top}}.cpp
+    make -C {{build_dir}} -f V{{top}}.mk V{{top}}
+    ./{{build_dir}}/V{{top}}
 
 clean:
     rm -rf {{build_dir}}

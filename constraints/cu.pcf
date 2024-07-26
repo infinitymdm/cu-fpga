@@ -13,8 +13,9 @@ set_io led[5] L14
 set_io led[6] M12
 set_io led[7] N14
 
-set_io usb_rx P14 # tx in the schematic
-set_io usb_tx M9  # rx in the schematic
+# UART
+set_io usb_rx P14 # USB_TXD/2.3D, IOR_110 (tx on schematic)
+set_io usb_tx M9  # USB_RXD/2.3D, IOB_91 (rx on schematic)
 
 # Reset
 set_io btn_reset P8
