@@ -29,5 +29,8 @@ sim top="main": prep
     make -C {{build_dir}} -f V{{top}}.mk V{{top}}
     ./{{build_dir}}/V{{top}}
 
+lint:
+    verilator --lint-only -Wall {{sources}}
+
 clean:
     rm -rf {{build_dir}}
