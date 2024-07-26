@@ -1,10 +1,1 @@
-*.asc
-*.bin
-*.blif
-*.dot
-*.json
-*.log
-*.png
-*.rpt
-*.vcd
-*.vvp
+build
