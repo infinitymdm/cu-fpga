@@ -6,35 +6,47 @@ dev_model := 'cb132'
 # dirs
 build_dir := 'build'
 tb_dir := 'tb'
+wave_dir := '.'
 
 # parse source files
 constraints := `find constraints -name "*.pcf" | tr '\n' ' '`
 sources := `find src -name "*.sv" | tr '\n' ' '`
 
+
+_default:
+    @just --list
+
+# Create a build directory
 prep:
     mkdir -p {{build_dir}}
 
-synth top="main": prep
-    yosys -q -p 'synth_ice40 -top {{top}} -json {{build_dir}}/{{dev_name}}.json' {{sources}}
+# Synthesize the design
+synth design="main": prep
+    yosys -q -p 'synth_ice40 -top {{design}} -json {{build_dir}}/{{dev_name}}_{{design}}.json' {{sources}}
 
-pnr top="main": (synth top)
-    nextpnr-ice40 --{{dev_family}} --package {{dev_model}} --json {{build_dir}}/{{dev_name}}.json --pcf {{constraints}} --asc {{build_dir}}/{{dev_name}}.asc
-    icetime -d {{dev_family}} -mtr {{build_dir}}/{{dev_name}}.rpt {{build_dir}}/{{dev_name}}.asc
-    icepack {{build_dir}}/{{dev_name}}.asc {{build_dir}}/{{dev_name}}_{{top}}.bin
+# Place and route the design
+pnr design="main": (synth design)
+    nextpnr-ice40 --{{dev_family}} --package {{dev_model}} --json {{build_dir}}/{{dev_name}}_{{design}}.json --pcf {{constraints}} --asc {{build_dir}}/{{dev_name}}_{{design}}.asc
+    icetime -d {{dev_family}} -mtr {{build_dir}}/{{dev_name}}_{{design}}.rpt {{build_dir}}/{{dev_name}}_{{design}}.asc
+    icepack {{build_dir}}/{{dev_name}}_{{design}}.asc {{build_dir}}/{{dev_name}}_{{design}}.bin
 
-upload top="main": (pnr top)
-    iceprog {{build_dir}}/{{dev_name}}_{{top}}.bin
+# Upload the design to the FPGA
+upload design="main": (pnr design)
+    iceprog {{build_dir}}/{{dev_name}}_{{design}}.bin
 
-sim top="main": prep
-    verilator --trace --top {{top}} --cc {{sources}} --Mdir {{build_dir}} --exe {{tb_dir}}/tb_{{top}}.cpp
-    make -C {{build_dir}} -f V{{top}}.mk V{{top}}
-    ./{{build_dir}}/V{{top}}
+# Simulate the design against a testbench using verilator
+sim design="main": prep
+    verilator --trace --top {{design}} --cc {{sources}} --Mdir {{build_dir}} --exe {{tb_dir}}/tb_{{design}}.cpp
+    make -C {{build_dir}} -f V{{design}}.mk V{{design}}
+    ./{{build_dir}}/V{{design}}
 
+# View simulation waveforms
 view:
-    gtkwave *.vcd
+    gtkwave {{wave_dir}}/*.vcd
 
-lint top="main":
-    verilator --lint-only -Wall --top {{top}} -Isrc {{sources}}
+# Check the design for common code errors
+lint design="main":
+    verilator --lint-only -Wall --top {{design}} -Isrc {{sources}}
 
 clean:
     rm -rf {{build_dir}}

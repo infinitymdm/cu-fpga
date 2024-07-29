@@ -1,4 +1,4 @@
-module main (
+module top_7seg_clock (
   input  logic io_btn_down, btn_reset, cu_clk,
   output logic [3:0] io_7seg_select,
   output logic [7:0] led, io_7seg
