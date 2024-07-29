@@ -3,12 +3,13 @@ dev_name := 'alchitry_cu'
 dev_family := 'hx8k'
 dev_model := 'cb132'
 
-# source files
-constraints := `find constraints -name "*.pcf" | tr '\n' ' '`
-sources := `find src -name "*.sv" | tr '\n' ' '`
-
+# dirs
 build_dir := 'build'
 tb_dir := 'tb'
+
+# parse source files
+constraints := `find constraints -name "*.pcf" | tr '\n' ' '`
+sources := `find src -name "*.sv" | tr '\n' ' '`
 
 prep:
     mkdir -p {{build_dir}}
@@ -29,8 +30,11 @@ sim top="main": prep
     make -C {{build_dir}} -f V{{top}}.mk V{{top}}
     ./{{build_dir}}/V{{top}}
 
-lint:
-    verilator --lint-only -Wall {{sources}}
+view:
+    gtkwave *.vcd
+
+lint top="main":
+    verilator --lint-only -Wall --top {{top}} -Isrc {{sources}}
 
 clean:
     rm -rf {{build_dir}}

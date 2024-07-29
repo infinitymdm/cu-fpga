@@ -46,6 +46,6 @@ module dec6_counter (
       default: data = 4'd0;
     endcase
   end
-  delay d1(clk, (state == S5) & (nextstate == S0), carry);
+  delay_ff d1(clk, (state == S5) & (nextstate == S0), carry);
 
 endmodule

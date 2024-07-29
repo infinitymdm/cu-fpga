@@ -162,6 +162,6 @@ module dec24_counter (
     endcase
   end
 
-  delay d1(clk, (state == S23) & (nextstate == S0), carry);
+  delay_ff d1(clk, (state == S23) & (nextstate == S0), carry);
   
 endmodule
