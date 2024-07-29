@@ -4,21 +4,21 @@
 set_io cu_clk P7
 
 # Onboard LEDs
-set_io led[0] J11
-set_io led[1] K11
-set_io led[2] K12
-set_io led[3] K14
-set_io led[4] L12
-set_io led[5] L14
-set_io led[6] M12
-set_io led[7] N14
+set_io cu_led[0] J11
+set_io cu_led[1] K11
+set_io cu_led[2] K12
+set_io cu_led[3] K14
+set_io cu_led[4] L12
+set_io cu_led[5] L14
+set_io cu_led[6] M12
+set_io cu_led[7] N14
 
 # UART
-set_io usb_rx P14 # USB_TXD/2.3D, IOR_110 (tx on schematic)
-set_io usb_tx M9  # USB_RXD/2.3D, IOB_91 (rx on schematic)
+set_io cu_usb_rx P14    # USB_TXD/2.3D, IOR_110 (tx on schematic)
+set_io cu_usb_tx M9     # USB_RXD/2.3D, IOB_91 (rx on schematic)
 
 # Reset
-set_io btn_reset P8
+set_io cu_btn_reset P8
 
 
 ## Alchitry IO
@@ -80,23 +80,23 @@ set_io io_dip_c[6] C12  # BB39, IOT_172
 set_io io_dip_c[7] C11  # BB40, IOT_174
 
 # D-pad buttons
-set_io io_btn_up G11    # BB28, IOR_136
-set_io io_btn_down H12  # BB23, IOR_120
-set_io io_btn_left J12  # BB24, IOR_118
-set_io io_btn_right P2  # CB49, IOB_56
+set_io io_btn_n G11     # BB28, IOR_136
+set_io io_btn_s H12     # BB23, IOR_120
+set_io io_btn_e P2      # CB49, IOB_56
+set_io io_btn_w J12     # BB24, IOR_118
 set_io io_btn_ctr H11   # BB27, IOR_128
 
 # 7-segment displays
-set_io io_7seg_select[0] G3 # AB9, IOL_13_P
-set_io io_7seg_select[1] G1 # AB8, IOL_13_N
-set_io io_7seg_select[2] H1 # AB42, IOL_14_P
-set_io io_7seg_select[3] H3 # AB43, IOL_14_N
+set_io io_7seg_s[0] G3  # AB9, IOL_13_P
+set_io io_7seg_s[1] G1  # AB8, IOL_13_N
+set_io io_7seg_s[2] H1  # AB42, IOL_14_P
+set_io io_7seg_s[3] H3  # AB43, IOL_14_N
 
-set_io io_7seg[6] J1        # AB5, IOL_12_N
-set_io io_7seg[5] J3        # AB6, IOL_12_P
-set_io io_7seg[4] N1        # AB48, IOL_25_P
-set_io io_7seg[3] K4        # AB46, IOL_18_N
-set_io io_7seg[2] K3        # AB45, IOL_18_P
-set_io io_7seg[1] L1        # AB3, IOL_23_P
-set_io io_7seg[0] M1        # AB2, IOL_23_N
-set_io io_7seg[7] P1        # AB49, IOL_25_N
+set_io io_7seg[6] J1    # AB5, IOL_12_N
+set_io io_7seg[5] J3    # AB6, IOL_12_P
+set_io io_7seg[4] N1    # AB48, IOL_25_P
+set_io io_7seg[3] K4    # AB46, IOL_18_N
+set_io io_7seg[2] K3    # AB45, IOL_18_P
+set_io io_7seg[1] L1    # AB3, IOL_23_P
+set_io io_7seg[0] M1    # AB2, IOL_23_N
+set_io io_7seg[7] P1    # AB49, IOL_25_N
