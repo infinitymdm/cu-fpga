@@ -4,18 +4,18 @@ module alu #(
   input logic [WORD_LEN-1:0] a, b,
   input logic [3:0] op_select,
   output logic [WORD_LEN-1:0] result,
-  output logic zero
+  output logic zero, carry
 );
 
   // ALU supporting add, sub, and, or, xor, signed and unsigned comparison, shift, and arithmetic
   // shift operations.
 
-  logic carry, overflow;
-  logic [WORD_LEN-1:0] sum;
+  logic [WORD_LEN-1:0] opt_inv_b, sum;
+
+  assign opt_inv_b = op_select[0]? ~b+1 : b;
+  ppa_sklansky #(WORD_LEN) adder (.a, .b(opt_inv_b), .c_in(0), .s(sum), .c(carry));
 
   always_comb begin
-    {carry, sum} = a + {1'b0, (op_select[0]? b : ~b)}; // TODO: Use a fast adder
-
     case (op_select)
       0: result = a & b;
       1: result = a | b;
