@@ -4,6 +4,7 @@
 #include <verilated.h>
 #include <verilated_vcd_c.h>
 #include <Valu.h>
+#include <Valu_alu.h>
 #include <Valu___024root.h>
 
 // Wrapper functions for simulated versions of alu ops
@@ -15,7 +16,9 @@ int sim_sub (int x, int y) {return x - y;}
 
 
 bool test_op (Valu *dut, vluint64_t &t_sim, VerilatedVcdC *m_trace, int op, int (*op_sim)(int, int)) {
-    int expected;
+    std::bitset<Valu_alu::WORD_LEN> expected;
+    std::bitset<Valu_alu::WORD_LEN> evaluated;
+    bool valid = true;
 
     // Iterate over many values for x and y
     dut->op_select = op;
@@ -26,15 +29,17 @@ bool test_op (Valu *dut, vluint64_t &t_sim, VerilatedVcdC *m_trace, int op, int 
             dut->eval();
 
             // Determine the expected result from the operator simulation function
-            expected = op_sim(x, y);
+            expected = std::bitset<Valu_alu::WORD_LEN>(op_sim(x, y));
+            evaluated = std::bitset<Valu_alu::WORD_LEN>(dut->result);
 
             // Print an error and exit early if the result doesn't match what we expect
-            if (expected != dut->result) {
-                std::cout << "ERROR: result did not match expected"
-                    << "\nexpected: " << expected
-                    << "\nresult:   " << (int)(dut->result)
-                    << "\nt_sim:    " << t_sim << std::endl;
-                return false;
+            if (expected != evaluated) {
+                std::cout << "ERROR: result did not match expected" << std::endl
+                    << "\texpected: " << expected << std::endl
+                    << "\tresult:   " << evaluated << std::endl
+                    << "\top:       " << op << "(" << x << "," << y << ")" << std::endl
+                    << "\tt_sim:    " << t_sim << std::endl;
+                valid = false;
             }
 
             // Dump results to waveform and step sim time
@@ -42,7 +47,7 @@ bool test_op (Valu *dut, vluint64_t &t_sim, VerilatedVcdC *m_trace, int op, int 
             t_sim++;
         }
     }
-    return true;
+    return valid;
 }
 
 

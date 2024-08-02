@@ -1,5 +1,5 @@
 module alu #(
-  parameter WORD_LEN = 32
+  parameter WORD_LEN /* verilator public */ = 32 
 ) (
   input logic [WORD_LEN-1:0] a, b,
   input logic [3:0] op_select,
