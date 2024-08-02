@@ -17,11 +17,11 @@ _default:
     @just --list
 
 # Create a build directory
-prep:
+_prep:
     mkdir -p {{build_dir}}
 
 # Synthesize the design
-synth design: prep
+synth design: _prep
     yosys -q -p 'synth_ice40 -top {{design}} -json {{build_dir}}/{{dev_name}}_{{design}}.json' {{sources}}
 
 # Place and route the design
@@ -35,7 +35,7 @@ upload design: (pnr design)
     iceprog {{build_dir}}/{{dev_name}}_{{design}}.bin
 
 # Simulate the design against a testbench using verilator
-sim design *FLAGS: prep
+sim design *FLAGS: _prep
     verilator --trace --x-assign unique --x-initial unique --top {{design}} --cc {{sources}} --Mdir {{build_dir}} --exe {{tb_dir}}/tb_{{design}}.cpp {{FLAGS}}
     make -C {{build_dir}} -f V{{design}}.mk V{{design}}
     ./{{build_dir}}/V{{design}} +verilator+rand+reset+2
@@ -50,3 +50,6 @@ lint design:
 
 clean:
     rm -rf {{build_dir}}
+    rm -f *.vcd
+    rm -f *.dot
+    rm -f *.png

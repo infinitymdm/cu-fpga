@@ -4,6 +4,6 @@ module full_adder (
 );
 
   assign s = c_in ? ~(a^b) : (a^b);
-  assign c = (a^b)? c0 : (a&b);
+  assign c = (a^b)? c_in : (a&b);
 
 endmodule
