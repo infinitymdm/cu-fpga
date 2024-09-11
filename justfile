@@ -10,8 +10,13 @@ wave_dir := '.'
 
 # parse source files
 constraints := `find constraints -name "*.pcf" | tr '\n' ' '`
-sources := `find src -name "*.sv" | tr '\n' ' '`
+defines := `find include -name '*.sv' | tr '\n' ' '`
+includes := `find {src,tb,include} -name '*.sv' -printf '-I%h\n' | sort -u | tr '\n' ' '`
+src_sv := `find src -name "*.sv" | tr '\n' ' '`
 
+# UVM-related settings
+uvm_flags := "-DUVM_NO_DPI"
+warnings := "-Wno-CONSTRAINTIGN -Wno-ZERODLY -Wno-SYMRSVDWORD"
 
 _default:
     @just --list
@@ -22,7 +27,7 @@ _prep:
 
 # Synthesize the design
 synth design: _prep
-    yosys -q -p 'synth_ice40 -top {{design}} -json {{build_dir}}/{{dev_name}}_{{design}}.json' {{sources}}
+    yosys -q -p 'synth_ice40 -top {{design}} -json {{build_dir}}/{{dev_name}}_{{design}}.json' {{src_sv}}
 
 # Place and route the design
 pnr design: (synth design)
@@ -36,7 +41,7 @@ upload design: (pnr design)
 
 # Simulate the design against a testbench using verilator
 sim design *FLAGS: _prep
-    verilator --trace --x-assign unique --x-initial unique --top {{design}} --cc {{sources}} --Mdir {{build_dir}} --exe {{tb_dir}}/tb_{{design}}.cpp {{FLAGS}}
+    verilator --binary --timing --Mdir {{build_dir}} {{defines}} {{includes}} --top {{design}} `find -name {{design}}.sv` {{uvm_flags}} -Wno-lint {{warnings}} {{FLAGS}} -j `nproc`
     make -C {{build_dir}} -f V{{design}}.mk V{{design}}
     ./{{build_dir}}/V{{design}} +verilator+rand+reset+2
 
@@ -45,8 +50,8 @@ view:
     gtkwave {{wave_dir}}/*.vcd
 
 # Check the design for common code errors
-lint design:
-    verilator --lint-only -Wall --top {{design}} -Isrc {{sources}}
+lint design *FLAGS:
+    verilator --lint-only {{defines}} {{includes}} --top {{design}} {{uvm_flags}} -Wall {{warnings}} {{FLAGS}}
 
 clean:
     rm -rf {{build_dir}}
