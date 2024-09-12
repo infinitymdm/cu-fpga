@@ -1,3 +1,6 @@
+`include "alu_driver.sv"
+`include "alu_monitor.sv"
+
 class alu_agent extends uvm_agent;
 
   `uvm_component_utils(alu_agent)
@@ -8,11 +11,11 @@ class alu_agent extends uvm_agent;
 
   alu_driver              drv;
   alu_monitor             mon;
-  uvm_sequencer #(alu_tx) seq;
+  uvm_sequencer #(alu_tx,alu_tx) seq;
 
   virtual function void build_phase(uvm_phase phase);
     super.build_phase(phase);
-    seq = uvm_sequencer#(alu_tx)::type_id::create("seq", this);
+    seq = uvm_sequencer#(alu_tx,alu_tx)::type_id::create("seq", this);
     drv = alu_driver::type_id::create("drv", this);
     mon = alu_monitor::type_id::create("mon", this);
   endfunction

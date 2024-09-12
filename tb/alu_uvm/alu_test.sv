@@ -1,3 +1,6 @@
+`include "alu_env.sv"
+`include "alu_gen_seq.sv"
+
 class alu_test extends uvm_test;
 
   `uvm_component_utils(alu_test)
@@ -14,14 +17,14 @@ class alu_test extends uvm_test;
     env = alu_env::type_id::create("env", this);
     if (!uvm_config_db#(virtual alu_if)::get(this, "", "alu_if", vif))
       `uvm_fatal("TEST", "Failed to get interface")
-    uvm_config_db#(virtual alu_env)::set(this, "env.agt.*", "alu_if", vif);
+    uvm_config_db#(virtual alu_if)::set(this, "env.agt.*", "alu_if", vif);
   endfunction
 
   virtual task run_phase(uvm_phase phase);
     alu_gen_seq gen = alu_gen_seq::type_id::create("gen");
     phase.raise_objection(this);
     apply_reset();
-    gen.randomize() with {n == 100;};
+    gen.randomize();
     gen.start(env.agt.seq);
     #100;
     phase.drop_objection(this);

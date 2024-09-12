@@ -10,13 +10,14 @@ wave_dir := '.'
 
 # parse source files
 constraints := `find constraints -name "*.pcf" | tr '\n' ' '`
-defines := `find include -name '*.sv' | tr '\n' ' '`
-includes := `find {src,tb,include} -name '*.sv' -printf '-I%h\n' | sort -u | tr '\n' ' '`
+include_dirs := `find {src,tb,include} -name '*.sv*' -printf '-I%h\n' | sort -u | tr '\n' ' '`
+include_sv := `find include -name 'uvm_pkg.sv' | tr '\n' ' '`
 src_sv := `find src -name "*.sv" | tr '\n' ' '`
+tb_sv := `find tb -name "*.sv" | tr '\n' ' '`
 
 # UVM-related settings
 uvm_flags := "-DUVM_NO_DPI"
-warnings := "-Wno-CONSTRAINTIGN -Wno-ZERODLY -Wno-SYMRSVDWORD"
+warnings := "-Wno-CONSTRAINTIGN -Wno-ZERODLY -Wno-SYMRSVDWORD -Wno-IGNOREDRETURN"
 
 _default:
     @just --list
@@ -41,7 +42,7 @@ upload design: (pnr design)
 
 # Simulate the design against a testbench using verilator
 sim design *FLAGS: _prep
-    verilator --binary --timing --Mdir {{build_dir}} {{defines}} {{includes}} --top {{design}} `find -name {{design}}.sv` {{uvm_flags}} -Wno-lint {{warnings}} {{FLAGS}} -j `nproc`
+    verilator --binary --timing --Mdir {{build_dir}} {{uvm_flags}} -Wno-lint {{warnings}} {{FLAGS}} -j `nproc` {{include_dirs}} --top {{design}} `find -name {{design}}.sv`
     make -C {{build_dir}} -f V{{design}}.mk V{{design}}
     ./{{build_dir}}/V{{design}} +verilator+rand+reset+2
 
@@ -51,7 +52,7 @@ view:
 
 # Check the design for common code errors
 lint design *FLAGS:
-    verilator --lint-only {{defines}} {{includes}} --top {{design}} {{uvm_flags}} -Wall {{warnings}} {{FLAGS}}
+    verilator --timing --lint-only {{uvm_flags}} -Wall {{warnings}} {{FLAGS}} {{include_dirs}} --top {{design}} {{include_sv}} {{tb_sv}} {{src_sv}}
 
 clean:
     rm -rf {{build_dir}}

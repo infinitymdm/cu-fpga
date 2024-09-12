@@ -1,3 +1,6 @@
+`include "alu_agent.sv"
+`include "alu_scoreboard.sv"
+
 class alu_env extends uvm_env;
 
   `uvm_component_utils(alu_env)

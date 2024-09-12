@@ -1,3 +1,5 @@
+`include "alu_tx.sv"
+
 class alu_driver extends uvm_driver #(alu_tx);
 
   `uvm_component_utils(alu_driver)
@@ -31,10 +33,6 @@ class alu_driver extends uvm_driver #(alu_tx);
     vif.a <= tx.a;
     vif.b <= tx.b;
     @(posedge vif.clk);
-    while (!vif.ready) begin : wait_rdy
-      `uvm_info("DRV", "Wait until interface is ready", UVM_LOW)
-      @(posedge vif.clk);
-    end
     vif.sel <= 0;
   endtask
 
