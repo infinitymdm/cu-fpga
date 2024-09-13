@@ -42,9 +42,9 @@ upload design: (pnr design)
 
 # Simulate the design against a testbench using verilator
 sim design *FLAGS: _prep
-    verilator --binary --runtime-debug --timing --trace --Mdir {{build_dir}} {{uvm_flags}} -Wno-lint {{warnings}} {{FLAGS}} -j `nproc` {{include_dirs}} --top {{design}} `find -name {{design}}.sv`
+    verilator --binary --timing --trace --Mdir {{build_dir}} {{uvm_flags}} -Wno-lint {{warnings}} {{FLAGS}} -j `nproc` {{include_dirs}} --top {{design}} `find -name {{design}}.sv`
     make -C {{build_dir}} -f V{{design}}.mk V{{design}}
-    just run {{design}} +verilator+debug
+    just run {{design}}
 
 run design *FLAGS:
     ./{{build_dir}}/V{{design}} {{FLAGS}}
