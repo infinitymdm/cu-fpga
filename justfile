@@ -44,7 +44,10 @@ upload design: (pnr design)
 sim design *FLAGS: _prep
     verilator --binary --timing --Mdir {{build_dir}} {{uvm_flags}} -Wno-lint {{warnings}} {{FLAGS}} -j `nproc` {{include_dirs}} --top {{design}} `find -name {{design}}.sv`
     make -C {{build_dir}} -f V{{design}}.mk V{{design}}
-    ./{{build_dir}}/V{{design}} +verilator+rand+reset+2
+    just run {{design}}
+
+run design:
+    ./{{build_dir}}/V{{design}}
 
 # View simulation waveforms
 view:

@@ -11,7 +11,7 @@ class alu_agent extends uvm_agent;
 
   alu_driver              drv;
   alu_monitor             mon;
-  uvm_sequencer #(alu_tx,alu_tx) seq;
+  uvm_sequencer #(alu_tx,alu_tx) seq; // We have to pass twice because of a silly bug in verilator
 
   virtual function void build_phase(uvm_phase phase);
     super.build_phase(phase);

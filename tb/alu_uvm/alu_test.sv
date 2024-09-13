@@ -15,6 +15,7 @@ class alu_test extends uvm_test;
   virtual function void build_phase(uvm_phase phase);
     super.build_phase(phase);
     env = alu_env::type_id::create("env", this);
+    `uvm_info("TEST", "Build phase", UVM_LOW)
     if (!uvm_config_db#(virtual alu_if)::get(this, "", "alu_if", vif))
       `uvm_fatal("TEST", "Failed to get interface")
     uvm_config_db#(virtual alu_if)::set(this, "env.agt.*", "alu_if", vif);
@@ -22,6 +23,7 @@ class alu_test extends uvm_test;
 
   virtual task run_phase(uvm_phase phase);
     alu_gen_seq gen = alu_gen_seq::type_id::create("gen");
+    `uvm_info("TEST", "Run phase", UVM_LOW)
     phase.raise_objection(this);
     apply_reset();
     gen.randomize();
