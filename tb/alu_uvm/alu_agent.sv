@@ -9,20 +9,20 @@ class alu_agent extends uvm_agent;
     super.new(name, parent);
   endfunction
 
-  alu_driver              drv;
-  alu_monitor             mon;
-  uvm_sequencer #(alu_tx,alu_tx) seq; // We have to pass twice because of a silly bug in verilator
+  alu_driver                      driver;
+  alu_monitor                     monitor;
+  uvm_sequencer #(alu_tx,alu_tx)  sequencer; // We have to pass alu_tx twice because of a silly bug in verilator
 
   virtual function void build_phase(uvm_phase phase);
     super.build_phase(phase);
-    seq = uvm_sequencer#(alu_tx,alu_tx)::type_id::create("seq", this);
-    drv = alu_driver::type_id::create("drv", this);
-    mon = alu_monitor::type_id::create("mon", this);
+    sequencer = uvm_sequencer#(alu_tx,alu_tx)::type_id::create("sequencer", this);
+    driver = alu_driver::type_id::create("driver", this);
+    monitor = alu_monitor::type_id::create("monitor", this);
   endfunction
 
   virtual function void connect_phase(uvm_phase phase);
     super.connect_phase(phase);
-    drv.seq_item_port.connect(seq.seq_item_export);
+    driver.seq_item_port.connect(sequencer.seq_item_export);
   endfunction
 
 endclass

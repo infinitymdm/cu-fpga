@@ -16,26 +16,26 @@ class alu_scoreboard extends uvm_scoreboard;
   virtual function write(alu_tx tx);
     case (tx.op_select)
       0: if (tx.result == (tx.a & tx.b))
-          `uvm_info("SCB", $sformatf("PASS! %s", tx.toString()), UVM_LOW)
+          `uvm_info(get_full_name(), $sformatf("PASS! %s", tx.toString()), UVM_LOW)
         else
-          `uvm_error("SCB", $sformatf("ERROR! Expected result=0x%0h, got: %s", (tx.a & tx.b), tx.toString()))
+          `uvm_error(get_full_name(), $sformatf("ERROR! Expected result=0x%0h, got: %s", (tx.a & tx.b), tx.toString()))
       1: if (tx.result == (tx.a | tx.b))
-          `uvm_info("SCB", $sformatf("PASS! %s", tx.toString()), UVM_LOW)
+          `uvm_info(get_full_name(), $sformatf("PASS! %s", tx.toString()), UVM_LOW)
         else
-          `uvm_error("SCB", $sformatf("ERROR! Expected result=0x%0h, got: %s", (tx.a | tx.b), tx.toString()))
+          `uvm_error(get_full_name(), $sformatf("ERROR! Expected result=0x%0h, got: %s", (tx.a | tx.b), tx.toString()))
       2: if (tx.result == (tx.a ^ tx.b))
-          `uvm_info("SCB", $sformatf("PASS! %s", tx.toString()), UVM_LOW)
+          `uvm_info(get_full_name(), $sformatf("PASS! %s", tx.toString()), UVM_LOW)
         else
-          `uvm_error("SCB", $sformatf("ERROR! Expected result=0x%0h, got: %s", (tx.a ^ tx.b), tx.toString()))
+          `uvm_error(get_full_name(), $sformatf("ERROR! Expected result=0x%0h, got: %s", (tx.a ^ tx.b), tx.toString()))
       8: if (tx.result == (tx.a + tx.b))
-          `uvm_info("SCB", $sformatf("PASS! %s", tx.toString()), UVM_LOW)
+          `uvm_info(get_full_name(), $sformatf("PASS! %s", tx.toString()), UVM_LOW)
         else
-          `uvm_error("SCB", $sformatf("ERROR! Expected result=0x%0h, got: %s", (tx.a + tx.b), tx.toString()))
+          `uvm_error(get_full_name(), $sformatf("ERROR! Expected result=0x%0h, got: %s", (tx.a + tx.b), tx.toString()))
       9: if (tx.result == (tx.a - tx.b))
-          `uvm_info("SCB", $sformatf("PASS! %s", tx.toString()), UVM_LOW)
+          `uvm_info(get_full_name(), $sformatf("PASS! %s", tx.toString()), UVM_LOW)
         else
-          `uvm_error("SCB", $sformatf("ERROR! Expected result=0x%0h, got: %s", (tx.a - tx.b), tx.toString()))
-      default: `uvm_error("SCB", $sformatf("ERROR! Unrecognized op %0h", tx.op_select))
+          `uvm_error(get_full_name(), $sformatf("ERROR! Expected result=0x%0h, got: %s", (tx.a - tx.b), tx.toString()))
+      default: `uvm_error(get_full_name(), $sformatf("ERROR! Unrecognized op %0h", tx.op_select))
     endcase
   endfunction
 

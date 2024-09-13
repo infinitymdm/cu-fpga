@@ -42,12 +42,12 @@ upload design: (pnr design)
 
 # Simulate the design against a testbench using verilator
 sim design *FLAGS: _prep
-    verilator --binary --timing --Mdir {{build_dir}} {{uvm_flags}} -Wno-lint {{warnings}} {{FLAGS}} -j `nproc` {{include_dirs}} --top {{design}} `find -name {{design}}.sv`
+    verilator --binary --runtime-debug --timing --trace --Mdir {{build_dir}} {{uvm_flags}} -Wno-lint {{warnings}} {{FLAGS}} -j `nproc` {{include_dirs}} --top {{design}} `find -name {{design}}.sv`
     make -C {{build_dir}} -f V{{design}}.mk V{{design}}
-    just run {{design}}
+    just run {{design}} +verilator+debug
 
-run design:
-    ./{{build_dir}}/V{{design}}
+run design *FLAGS:
+    ./{{build_dir}}/V{{design}} {{FLAGS}}
 
 # View simulation waveforms
 view:
@@ -55,7 +55,7 @@ view:
 
 # Check the design for common code errors
 lint design *FLAGS:
-    verilator --timing --lint-only {{uvm_flags}} -Wall {{warnings}} {{FLAGS}} {{include_dirs}} --top {{design}} {{include_sv}} {{tb_sv}} {{src_sv}}
+    verilator --lint-only --timing {{uvm_flags}} -Wall {{warnings}} {{FLAGS}} {{include_dirs}} --top {{design}} `find -name {{design}}.sv`
 
 clean:
     rm -rf {{build_dir}}

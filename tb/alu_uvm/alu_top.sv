@@ -8,22 +8,24 @@ import uvm_pkg::*;
 module alu_top;
 
   bit clk;
-  always #10 clk <= ~clk;
+  bit reset;
 
-  alu_if #(32) dut_if ();
+  alu_if #(32) ivif (.clk, .reset);
+  alu_if #(32) ovif (.clk, .reset);
   alu #(32) dut(
-    .a(dut_if.a), .b(dut_if.b), .op_select(dut_if.op_select),
-    .result(dut_if.result), .zero(dut_if.zero), .carry(dut_if.carry)
+    .a(ivif.a), .b(ivif.b), .op_select(ivif.op_select),
+    .result(ovif.result), .zero(ovif.zero), .carry(ovif.carry)
   );
 
   initial begin
-    uvm_config_db#(virtual alu_if)::set(null, "", "alu_if", dut_if);
+    uvm_config_db#(virtual alu_if)::set(uvm_root::get(), "*.agent.*", "alu_in_if", ivif);
+    uvm_config_db#(virtual alu_if)::set(uvm_root::get(), "*.agent.*", "alu_out_if", ovif);
     run_test("alu_test");
   end
 
   initial begin
-    $dumpvars;
     $dumpfile("dump.vcd");
+    $dumpvars;
   end
 
 endmodule

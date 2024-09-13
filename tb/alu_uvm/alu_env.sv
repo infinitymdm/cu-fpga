@@ -9,18 +9,18 @@ class alu_env extends uvm_env;
     super.new(name, parent);
   endfunction
 
-  alu_agent       agt;
-  alu_scoreboard  scb;
+  alu_agent       agent;
+  alu_scoreboard  scoreboard;
 
   virtual function void build_phase(uvm_phase phase);
     super.build_phase(phase);
-    agt = alu_agent::type_id::create("agt", this);
-    scb = alu_scoreboard::type_id::create("scb", this);
+    agent = alu_agent::type_id::create("agent", this);
+    scoreboard = alu_scoreboard::type_id::create("scoreboard", this);
   endfunction
 
   virtual function void connect_phase(uvm_phase phase);
     super.connect_phase(phase);
-    agt.mon.monitor_analysis_port.connect(scb.tx_analysis_imp);
+    agent.monitor.monitor_analysis_port.connect(scoreboard.tx_analysis_imp);
   endfunction
 
 endclass

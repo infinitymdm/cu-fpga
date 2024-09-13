@@ -22,4 +22,8 @@ class alu_tx #(int WORD_LEN = 32) extends uvm_sequence_item;
     super.new(name);
   endfunction
 
+  constraint op_c {
+    op_select inside {0, 1, 2, 8, 9};
+  }
+
 endclass
