@@ -13,13 +13,13 @@ class alu_tx #(int WORD_LEN = 32) extends uvm_sequence_item;
     `uvm_field_int (zero, UVM_DEFAULT)
     `uvm_field_int (carry, UVM_DEFAULT)
   `uvm_object_utils_end
+  
+  function new(string name="alu_in_tx");
+    super.new(name);
+  endfunction
 
   virtual function string toString();
     return $sformatf("a = 0x%0h, b = 0x%0h, op_select = 0x%0h, result = 0x%0h, z = %b, c = %b", a, b, op_select, result, zero, carry);
-  endfunction
-
-  function new(string name="alu_in_tx");
-    super.new(name);
   endfunction
 
   constraint op_c {

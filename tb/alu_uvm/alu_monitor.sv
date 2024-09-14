@@ -1,38 +1,36 @@
 class alu_monitor extends uvm_monitor;
 
   `uvm_component_utils(alu_monitor)
+  
+  virtual alu_if vif;
+  alu_tx tx_collected;
+  uvm_analysis_port #(alu_tx) item_collected_port;
 
   function new(string name="alu_monitor", uvm_component parent=null);
     super.new(name, parent);
+    tx_collected = new();
+    item_collected_port = new("item_collected_port", this);
   endfunction
-
-  uvm_analysis_port #(alu_tx) monitor_analysis_port;
-  virtual alu_if ivif;
-  virtual alu_if ovif;
 
   virtual function void build_phase(uvm_phase phase);
     super.build_phase(phase);
-    if (!uvm_config_db#(virtual alu_if)::get(this, "", "alu_in_if", ivif))
-      `uvm_fatal(get_full_name(), "Failed to get input interface")
-    if (!uvm_config_db#(virtual alu_if)::get(this, "", "alu_out_if", ovif))
-      `uvm_fatal(get_full_name(), "Failed to get output interface")
-    monitor_analysis_port = new("monitor_analysis_port", this);
+    if (!uvm_config_db#(virtual alu_if)::get(this, "", "vif", vif))
+      `uvm_fatal("NOVIF", "Failed to get interface")
     `uvm_info(get_full_name(), "Build phase complete.", UVM_LOW)
   endfunction
 
   virtual task run_phase(uvm_phase phase);
     super.run_phase(phase);
-    forever begin : monitor_tx
-      @(posedge ivif.clk);
-      if (ivif.enable) begin: monitor_tx_sel
-        alu_tx tx = new;
-        tx.op_select = ivif.op_select;
-        tx.a = ivif.a;
-        tx.b = ivif.b;
-        tx.result = ovif.result;
-        tx.zero = ovif.zero;
-        tx.carry = ovif.carry;
-        monitor_analysis_port.write(tx);
+    forever begin
+      @(posedge vif.clk);
+      if (vif.enable) begin: monitor_tx_sel
+        tx_collected.op_select = vif.op_select;
+        tx_collected.a = vif.a;
+        tx_collected.b = vif.b;
+        tx_collected.result = vif.result;
+        tx_collected.zero = vif.zero;
+        tx_collected.carry = vif.carry;
+        item_collected_port.write(tx_collected);
       end
     end
   endtask
