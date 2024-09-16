@@ -7,11 +7,13 @@ import uvm_pkg::*;
 
 module alu_top;
 
+  localparam WORD_LEN = 8;
+
   bit clk;
   bit reset;
 
-  alu_if #(32) vif (.clk, .reset);
-  alu #(32) dut(
+  alu_if #(WORD_LEN) vif (.clk, .reset);
+  alu #(WORD_LEN) dut(
     .op_select(vif.op_select),
     .a(vif.a), 
     .b(vif.b),
@@ -21,7 +23,7 @@ module alu_top;
   );
 
   initial begin
-    uvm_config_db#(virtual alu_if)::set(uvm_root::get(), "*", "vif", vif);
+    uvm_config_db#(virtual alu_if#(WORD_LEN))::set(uvm_root::get(), "*", "vif", vif);
     run_test("alu_test");
   end
 

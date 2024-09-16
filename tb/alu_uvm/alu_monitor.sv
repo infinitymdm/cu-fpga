@@ -1,10 +1,10 @@
-class alu_monitor extends uvm_monitor;
+class alu_monitor #(parameter WORD_LEN = 32) extends uvm_monitor;
 
-  `uvm_component_utils(alu_monitor)
+  `uvm_component_utils(alu_monitor#(WORD_LEN))
   
-  virtual alu_if vif;
-  alu_tx tx_collected;
-  uvm_analysis_port #(alu_tx) item_collected_port;
+  virtual alu_if #(WORD_LEN) vif;
+  alu_tx #(WORD_LEN) tx_collected;
+  uvm_analysis_port #(alu_tx#(WORD_LEN)) item_collected_port;
 
   function new(string name="alu_monitor", uvm_component parent=null);
     super.new(name, parent);
@@ -14,7 +14,7 @@ class alu_monitor extends uvm_monitor;
 
   virtual function void build_phase(uvm_phase phase);
     super.build_phase(phase);
-    if (!uvm_config_db#(virtual alu_if)::get(this, "", "vif", vif))
+    if (!uvm_config_db#(virtual alu_if#(WORD_LEN))::get(this, "", "vif", vif))
       `uvm_fatal("NOVIF", "Failed to get interface")
     `uvm_info(get_full_name(), "Build phase complete.", UVM_LOW)
   endfunction

@@ -1,9 +1,9 @@
-class alu_scoreboard extends uvm_scoreboard;
+class alu_scoreboard #(parameter WORD_LEN = 32) extends uvm_scoreboard;
 
-  `uvm_component_utils(alu_scoreboard);
+  `uvm_component_utils(alu_scoreboard#(WORD_LEN));
 
-  alu_tx tx_queue[$]; // Store received transactions in a queue
-  uvm_analysis_imp #(alu_tx, alu_scoreboard) item_collected_export;
+  alu_tx #(WORD_LEN) tx_queue[$]; // Store received transactions in a queue
+  uvm_analysis_imp #(alu_tx#(WORD_LEN), alu_scoreboard#(WORD_LEN)) item_collected_export;
 
   function new(string name="alu_scoreboard", uvm_component parent=null);
     super.new(name, parent);
@@ -14,12 +14,12 @@ class alu_scoreboard extends uvm_scoreboard;
     item_collected_export = new("item_collected_export", this);
   endfunction
 
-  virtual function write(alu_tx tx);
+  virtual function write(alu_tx #(WORD_LEN) tx);
     tx_queue.push_back(tx);
   endfunction
 
   virtual task run_phase(uvm_phase phase);
-    alu_tx tx;
+    alu_tx #(WORD_LEN) tx;
     forever begin
       wait(tx_queue.size() > 0);
       tx = tx_queue.pop_front();
