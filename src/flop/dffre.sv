@@ -3,11 +3,13 @@ module dffre #(
 ) (
     input  logic             clk, reset, enable,
     input  logic [width-1:0] d,
-    output logic [width-1:0] q,
+    output logic [width-1:0] q
 );
 
     always_ff @(posedge clk)
-        if (reset)   q <= '0;
-        else if (en) q <= d;
+        if (reset)
+            q <= '0;
+        else if (enable)
+            q <= d;
 
 endmodule
