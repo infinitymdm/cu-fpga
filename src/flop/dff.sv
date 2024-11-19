@@ -1,4 +1,4 @@
-module delay_ff (
+module dff (
   input logic clk, d,
   output logic q
 );
