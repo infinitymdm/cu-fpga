@@ -17,14 +17,14 @@ module keccak_theta #(
 
     function automatic logic [w-1:0] D (logic [b-1:0] data, int i);
         // xor column (x-1,:,z) with (x+1,:,z-1)
-        logic [w-1:0] t = C(data, (i+1) % 5);
-        return C(data, (i+4) % 5) ^ {t[w-2:0], t[w-1]};
+        logic [w-1:0] t = C(data, (i+1)%5);
+        return C(data, (i+4)%5) ^ {t[w-2:0], t[w-1]};
     endfunction
 
     generate
         for (genvar i = 0; i < 5; i++) begin: lane_x_select
             for (genvar j = 0; j < 5; j++) begin: lane_y_select
-                assign y[w*(5*i+j)+63:w*(5*i+j)] = x[w*(5*i+j)+63:w*(5*i+j)] ^ D(x, i);
+                assign y[w*(5*i+j)+:w] = x[w*(5*i+j)+:w] ^ D(x, i);
             end
         end
     endgenerate

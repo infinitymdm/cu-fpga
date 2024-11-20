@@ -8,7 +8,6 @@ module keccak_iota #(
     output logic [b-1:0] y
 );
 
-    assign y[0+:w] = x[0+:w] ^ rc;
-    assign y[b-1:w] = x[b-1:w];
+    assign y = {x[b-1:w*(5*2+3)], x[w*(5*2+2)+:w] ^ rc, x[w*(5*2+2)-1:0]};
 
 endmodule
