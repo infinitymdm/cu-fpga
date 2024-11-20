@@ -1,6 +1,4 @@
 // This module performs one iteration of the keccak sponge function each cycle
-`include "keccak_sha3_rho_consts.svh"
-`include "keccak_sha3_iota_consts.svh"
 
 module keccak #(
     parameter l = 6,
