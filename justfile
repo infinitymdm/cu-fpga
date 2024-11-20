@@ -48,7 +48,7 @@ sim design *FLAGS: _prep
 
 run design *FLAGS:
     cp {{build_dir}}/V{{design}} {{sim_dir}}/.
-    ./{{sim_dir}}/V{{design}} {{FLAGS}}
+    cd {{sim_dir}} && ./V{{design}} {{FLAGS}}
 
 # View simulation waveforms
 view:
@@ -56,7 +56,7 @@ view:
 
 # Check the design for common code errors
 lint design *FLAGS:
-    verilator --lint-only --timing -Wall {{FLAGS}} {{include_dirs}} --top {{design}} {{src_sv}}
+    verilator --lint-only --timing -Wall {{FLAGS}} {{include_dirs}} {{src_sv}} --top {{design}} `find -name {{design}}.sv`
 
 clean:
     rm -rf {{synth_dir}}
