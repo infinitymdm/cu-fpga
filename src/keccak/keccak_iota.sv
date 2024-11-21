@@ -1,13 +1,21 @@
 module keccak_iota #(
-    parameter l = 6,
-    parameter w = 2**l,
-    parameter b = 25*w
+    parameter w = 64
 ) (
-    input  logic [b-1:0] x,
-    input  logic [w-1:0] rc,
-    output logic [b-1:0] y
+    input  logic [4:0][4:0][w-1:0] x,
+    input  logic           [w-1:0] rc,
+    output logic [4:0][4:0][w-1:0] y
 );
 
-    assign y = {x[b-1:w*(5*2+3)], x[w*(5*2+2)+:w] ^ rc, x[w*(5*2+2)-1:0]};
+    generate
+        for (genvar i = 0; i < 5; i++) begin: sheet_select
+            for (genvar j = 0; j < 5; j++) begin: lane_select
+                if ((i == 0) & (j == 0)) begin: apply_rc
+                    assign y[i][j] = x[i][j] ^ rc;
+                end else begin: passthrough
+                    assign y[i][j] = x[i][j];
+                end
+            end
+        end
+    endgenerate
 
 endmodule

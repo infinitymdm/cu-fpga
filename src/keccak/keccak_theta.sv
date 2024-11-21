@@ -1,30 +1,19 @@
 module keccak_theta #(
-    parameter l = 6,
-    parameter w = 2**l,
-    parameter b = 25*w
+    parameter w = 64
 ) (
-    input  logic [b-1:0] x,
-    output logic [b-1:0] y
+    input  logic [4:0][4:0][w-1:0] x,
+    output logic [4:0][4:0][w-1:0] y
 );
-    function automatic logic [w-1:0] C (logic [b-1:0] data, int i);
-        // columnwise xor
-        return  data[w*(5*i+0)+:64] ^
-                data[w*(5*i+1)+:64] ^
-                data[w*(5*i+2)+:64] ^
-                data[w*(5*i+3)+:64] ^
-                data[w*(5*i+4)+:64];
-    endfunction
 
-    function automatic logic [w-1:0] D (logic [b-1:0] data, int i);
-        // xor column (x-1,:,z) with (x+1,:,z-1)
-        logic [w-1:0] t = C(data, (i+1)%5);
-        return C(data, (i+4)%5) ^ {t[w-2:0], t[w-1]};
-    endfunction
+    logic [4:0][w-1:0] C;
+    logic [4:0][w-1:0] D;
 
     generate
-        for (genvar i = 0; i < 5; i++) begin: lane_x_select
-            for (genvar j = 0; j < 5; j++) begin: lane_y_select
-                assign y[w*(5*i+j)+:w] = x[w*(5*i+j)+:w] ^ D(x, i);
+        for (genvar i = 0; i < 5; i++) begin: sheet_select
+            assign C[i] = x[i][0] ^ x[i][1] ^ x[i][2] ^ x[i][3] ^ x[i][4];
+            assign D[i] = C[(i+4)%5] ^ {C[(i+1)%5][w-2:0], C[(i+1)%5][w-1]};
+            for (genvar j = 0; j < 5; j++) begin: lane_select
+                assign y[i][j] = x[i][j] ^ D[i];
             end
         end
     endgenerate

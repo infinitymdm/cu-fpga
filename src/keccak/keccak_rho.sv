@@ -1,34 +1,27 @@
 module keccak_rho #(
-    parameter l = 6,
-    parameter w = 2**l,
-    parameter b = 25*w
+    parameter w = 64
 ) (
-    input  logic [b-1:0] x,
-    output logic [b-1:0] y
+    input  logic [4:0][4:0][w-1:0] x,
+    output logic [4:0][4:0][w-1:0] y
 );
 
-    /*localparam int rho_offsets [24:0] = {
+    // These work for all SHA3/SHAKE variations
+    localparam int rho_offsets [24:0] = {
           0,   1, 190,  28,  91,
          36, 300,   6,  55, 276,
           3,  10, 171, 153, 231,
         105,  45,  15,  21, 136,
         210,  66, 253, 120,  78
-    };*/
-    localparam int rho_offsets [24:0] = {
-        21, 120, 28, 55, 153,
-        136, 78, 91, 276, 231,
-        105, 210, 0, 36, 3,
-        45, 66, 1, 300, 10,
-        15, 253, 190, 6, 171
     };
 
-    // rotate each lane by the correct offset
     generate
-        for (genvar i = 0; i < 5; i++) begin: lane_x_select
-            for (genvar j = 0; j < 5; j++) begin: lane_y_select
-                rotate #(.width(w), .n(rho_offsets[5*i+j] % w)) rotate_lane (
-                    .x(x[w*(5*i+j)+:w]), .y(y[w*(5*i+j)+:w])
-                );
+        for (genvar i = 0; i < 5; i++) begin: sheet_select
+            for (genvar j = 0; j < 5; j++) begin: lane_select
+                if (rho_offsets[5*j+i] == 0) begin: rotate_0
+                    assign y[i][j] = x[i][j];
+                end else begin: rotate_n
+                    assign y[i][j] = {x[i][j][w-(rho_offsets[5*j+i]%w)-1:0], x[i][j][w-1:w-(rho_offsets[5*j+i]%w)]};
+                end
             end
         end
     endgenerate
