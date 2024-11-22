@@ -3,10 +3,8 @@ module tb_sha3 ();
     localparam d = 256;
     localparam r = 1600 - 2*d;
 
-    string message_file_name = "/usr/bin/python3";
+    string message_file_name = "/home/marcus/Pictures/wallpapers/Pines.jpg";
     int message_file;
-    int pad_count;
-    bit [7:0] message_byte;
 
     bit clk, reset, enable;
     bit [r-1:0] message;
@@ -41,29 +39,33 @@ module tb_sha3 ();
         end
     end
 
+    task automatic read_message_chunk (input int m_file, output bit [r-1:0] m);
+        int pad_count = 0;
+        byte message_byte;
+        for (int i = 0; i < r/8; i++) begin: get_message_byte
+            if (!$feof(m_file)) begin: read_byte
+                // Read as long as there are bytes
+                $fread(message_byte, m_file);
+                // $display("Read byte: %h", message_byte);
+            end else begin: pad_byte
+                // Once out of bytes to read, pad according to SHA3
+                pad_count++;
+                case ({pad_count == 1, i == r/8-1})
+                    2'b00: message_byte = 8'b00000000;
+                    2'b01: message_byte = 8'b00000001;
+                    2'b10: message_byte = 8'b01100000;
+                    2'b11: message_byte = 8'b01100001;
+                endcase
+            end
+            m = {m[r-9:0], message_byte};
+        end
+        $display("Message chunk: %h", message);
+    endtask
+
     always @(posedge clk) begin: stimulate_dut
         $display("digest: %h", digest);
         if (!$feof(message_file)) begin: get_message
-            // Handle reading binary message chunk & padding at eof
-            pad_count = 0;
-            for (int i = 0; i < r/8; i++) begin: get_message_byte
-                if (!$feof(message_file)) begin: read_byte
-                    // Read as long as there are bytes
-                    $fread(message_byte, message_file);
-                    // $display("Read byte: %h", message_byte);
-                end else begin: pad_byte
-                    // Once out of bytes to read, pad according to SHA3
-                    pad_count++;
-                    case ({pad_count == 1, i == r/8-1})
-                        2'b00: message_byte = 8'b00000000;
-                        2'b01: message_byte = 8'b00000001;
-                        2'b10: message_byte = 8'b01100000;
-                        2'b11: message_byte = 8'b01100001;
-                    endcase
-                end
-                message = {message, message_byte};
-            end
-            $display("Message chunk: %h", message);
+            read_message_chunk(message_file, message);
         end else begin: handle_eof
             $display("Result: %h", digest);
             $fclose(message_file);

@@ -64,7 +64,12 @@ module keccak #(
     };
 
     logic [b-1:0] state, next_state;
-    logic [n-1:0][4:0][4:0][w-1:0] x, x_theta, x_rho, x_pi, x_chi, x_iota;
+    logic [n-1:0][4:0][4:0][w-1:0] x /*verilator split_var*/;
+    logic [n-1:0][4:0][4:0][w-1:0] x_theta /*verilator split_var*/;
+    logic [n-1:0][4:0][4:0][w-1:0] x_rho /*verilator split_var*/;
+    logic [n-1:0][4:0][4:0][w-1:0] x_pi /*verilator split_var*/;
+    logic [n-1:0][4:0][4:0][w-1:0] x_chi /*verilator split_var*/;
+    logic [n-1:0][4:0][4:0][w-1:0] x_iota /*verilator split_var*/;
 
     dffre #(.width(b)) state_reg (
         .clk, .reset, .enable,
@@ -73,10 +78,11 @@ module keccak #(
     );
 
     // Perform the keccak sponge function to compute the next state
+    logic [4:0][4:0][w-1:0] x_in_blk = to_block({state[b-1:c] ^ message, state[c-1:0]});
     generate
         for (genvar q = 0; q < n; q++) begin: keccak_f_block
             if (q == 0) begin: keccak_f_init
-                assign x[q] = to_block({state[b-1:c] ^ message, state[c-1:0]});
+                assign x[q] = x_in_blk;
             end else begin: keccak_f_round
                 assign x[q] = x_iota[q-1];
             end
