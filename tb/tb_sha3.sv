@@ -59,13 +59,13 @@ module tb_sha3 ();
             end
             m = {m[r-9:0], message_byte};
         end
-        $display("Message chunk: %h", message);
     endtask
 
     always @(posedge clk) begin: stimulate_dut
         $display("digest: %h", digest);
         if (!$feof(message_file)) begin: get_message
             read_message_chunk(message_file, message);
+            $display("Message chunk: %h", message);
         end else begin: handle_eof
             $display("Result: %h", digest);
             $fclose(message_file);

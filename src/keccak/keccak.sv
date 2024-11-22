@@ -16,24 +16,6 @@ module keccak #(
     output logic [d-1:0] digest
 );
 
-    function automatic logic [4:0][4:0][w-1:0] to_block (logic [b-1:0] x_vec);
-        logic [4:0][4:0][w-1:0] x_block;
-        for (int i = 0; i < 5; i++)
-            for (int j = 0; j < 5; j++)
-                for (int k = 0; k < w; k++)
-                    x_block[i][j][k] = x_vec[w*(5*j + i) + k];
-        return x_block;
-    endfunction
-
-    function automatic logic [b-1:0] to_vector (logic [4:0][4:0][w-1:0] x_blk);
-        logic [b-1:0] x_vector;
-        for (int i = 0; i < 5; i++)
-            for (int j = 0; j < 5; j++)
-                for (int k = 0; k < w; k++)
-                    x_vector[w*(5*j + i) + k] = x_blk[i][j][k];
-        return x_vector;
-    endfunction
-
     // Note: These only work for SHA3/SHAKE algorithms (i.e. where l=6).
     // See FIPS 202 for details on how to generate constants for l~=6.
     longint iota_consts [23:0] = {
@@ -64,12 +46,8 @@ module keccak #(
     };
 
     logic [b-1:0] state, next_state;
-    logic [n-1:0][4:0][4:0][w-1:0] x /*verilator split_var*/;
-    logic [n-1:0][4:0][4:0][w-1:0] x_theta /*verilator split_var*/;
-    logic [n-1:0][4:0][4:0][w-1:0] x_rho /*verilator split_var*/;
-    logic [n-1:0][4:0][4:0][w-1:0] x_pi /*verilator split_var*/;
-    logic [n-1:0][4:0][4:0][w-1:0] x_chi /*verilator split_var*/;
-    logic [n-1:0][4:0][4:0][w-1:0] x_iota /*verilator split_var*/;
+    logic [b-1:0] x [n] /*verilator split_var*/;
+    logic [b-1:0] y [n] /*verilator split_var*/;
 
     dffre #(.width(b)) state_reg (
         .clk, .reset, .enable,
@@ -78,22 +56,17 @@ module keccak #(
     );
 
     // Perform the keccak sponge function to compute the next state
-    logic [4:0][4:0][w-1:0] x_in_blk = to_block({state[b-1:c] ^ message, state[c-1:0]});
     generate
-        for (genvar q = 0; q < n; q++) begin: keccak_f_block
-            if (q == 0) begin: keccak_f_init
-                assign x[q] = x_in_blk;
-            end else begin: keccak_f_round
-                assign x[q] = x_iota[q-1];
+        for (genvar round = 0; round < n; round++) begin: keccak_round
+            if (round == 0) begin: keccak_round_0
+                assign x[round] = {state[b-1:c] ^ message, state[c-1:0]};
+            end else begin: keccak_round_n
+                assign x[round] = y[round-1];
             end
-            keccak_theta #(.w) theta (.x(x[q]),       .y(x_theta[q]));
-            keccak_rho   #(.w) rho   (.x(x_theta[q]), .y(x_rho[q]));
-            keccak_pi    #(.w) pi    (.x(x_rho[q]),   .y(x_pi[q]));
-            keccak_chi   #(.w) chi   (.x(x_pi[q]),    .y(x_chi[q]));
-            keccak_iota  #(.w) iota  (.x(x_chi[q]),   .y(x_iota[q]), .rc(iota_consts[q]));
+            keccak_f_block #(.l) f_permute (.x(x[round]), .rc(iota_consts[round]), .y(y[round]));
         end
     endgenerate
-    assign next_state = to_vector(x_iota[n-1]);
+    assign next_state = y[n-1];
 
     // Output is sponge output after absorbing the full message
     // Technically this only works for SHA3 stuff, since r > d in all certified configurations
