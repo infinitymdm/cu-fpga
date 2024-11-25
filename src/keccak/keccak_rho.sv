@@ -15,8 +15,8 @@ module keccak_rho #(
     };
 
     generate
-        for (genvar i = 0; i < 5; i=i+1) begin: sheet_select
-            for (genvar j = 0; j < 5; j=j+1) begin: lane_select
+        for (genvar i = 0; i < 5; i++) begin: sheet_select
+            for (genvar j = 0; j < 5; j++) begin: lane_select
                 if (rho_offsets[5*j+i] == 0) begin: rotate_0
                     assign y[i][j] = x[i][j];
                 end else begin: rotate_n

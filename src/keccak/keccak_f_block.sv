@@ -11,11 +11,10 @@ module keccak_f_block #(
     logic [4:0][4:0][w-1:0] x_block, x_theta, x_rho, x_pi, x_chi, y_block;
 
     // Reorganize i/o into 3-dimensional blocks for easy indexing in keccak subfunctions
-    genvar i, j, k;
     generate
-        for (i = 0; i < 5; i=i+1) begin: sheet_select
-            for (j = 0; j < 5; j=j+1) begin: lane_select
-                for (k = 0; k < w; k=k+1) begin: bit_select
+        for (genvar i = 0; i < 5; i++) begin: sheet_select
+            for (genvar j = 0; j < 5; j++) begin: lane_select
+                for (genvar k = 0; k < w; k++) begin: bit_select
                     assign x_block[i][j][k] = x[w*(5*j + i) + k];
                     assign y[w*(5*j + i) + k] = y_block[i][j][k];
                 end
