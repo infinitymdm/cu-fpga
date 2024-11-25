@@ -52,8 +52,10 @@ run design *FLAGS:
 
 # Simulate a testbench using QuestaSim
 questasim *FLAGS: _prep
-    vlog -lint -work {{sim_dir}} {{FLAGS}} src/keccak/keccak_theta.sv src/keccak/keccak_rho.sv src/keccak/keccak_pi.sv src/keccak/keccak_chi.sv src/keccak/keccak_iota.sv src/keccak/keccak_f_block.sv
-    # src/keccak/keccak.sv tb/tb_sha3.sv
+    vlog -lint -work {{sim_dir}} {{FLAGS}} src/keccak/keccak_theta.sv src/keccak/keccak_rho.sv src/keccak/keccak_pi.sv src/keccak/keccak_chi.sv src/keccak/keccak_iota.sv
+    vlog -lint -work {{sim_dir}} {{FLAGS}} src/keccak/keccak_f_block.sv
+    vlog -lint -work {{sim_dir}} {{FLAGS}} src/keccak/keccak.sv
+    vlog -lint -work {{sim_dir}} {{FLAGS}} tb/tb_sha3.sv
     vsim -lib {{sim_dir}} tb_sha3
 
 # View simulation waveforms
