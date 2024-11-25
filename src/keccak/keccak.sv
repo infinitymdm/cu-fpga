@@ -18,7 +18,7 @@ module keccak #(
 
     // Note: These only work for SHA3/SHAKE algorithms (i.e. where l=6).
     // See FIPS 202 for details on how to generate constants for l~=6.
-    longint iota_consts [23:0] = {
+    logic [63:0] iota_consts [23:0] = {
         64'h0000000000000001,
         64'h0000000000008082,
         64'h800000000000808a,
@@ -57,7 +57,7 @@ module keccak #(
 
     // Perform the keccak sponge function to compute the next state
     generate
-        for (genvar round = 0; round < n; round++) begin: keccak_round
+        for (genvar round = 0; round < n; round=round+1) begin: keccak_round
             if (round == 0) begin: keccak_round_0
                 assign x[round] = {state[b-1:c] ^ message, state[c-1:0]};
             end else begin: keccak_round_n

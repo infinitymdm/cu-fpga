@@ -6,8 +6,8 @@ module keccak_pi #(
 );
 
     generate
-        for (genvar i = 0; i < 5; i++) begin: sheet_select
-            for(genvar j = 0; j < 5; j++) begin: lane_select
+        for (genvar i = 0; i < 5; i=i+1) begin: sheet_select
+            for(genvar j = 0; j < 5; j=j+1) begin: lane_select
                 assign y[i][j] = x[(i+3*j)%5][i];
             end
         end

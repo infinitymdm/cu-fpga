@@ -6,8 +6,8 @@ module keccak_chi #(
 );
 
     generate
-        for (genvar i = 0; i < 5; i++) begin: sheet_select
-            for(genvar j = 0; j < 5; j++) begin: lane_select
+        for (genvar i = 0; i < 5; i=i+1) begin: sheet_select
+            for(genvar j = 0; j < 5; j=j+1) begin: lane_select
                 assign y[i][j] = x[i][j] ^ ((~x[(i+1)%5][j]) & x[(i+2)%5][j]); // Spec uses ^1 instead of ~. Double check
             end
         end
