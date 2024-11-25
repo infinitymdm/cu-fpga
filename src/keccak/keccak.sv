@@ -63,7 +63,7 @@ module keccak #(
             end else begin: keccak_round_n
                 assign x[round] = y[round-1];
             end
-            keccak_f_block #(.l) f_permute (.x(x[round]), .rc(iota_consts[round]), .y(y[round]));
+            keccak_f_block #(l) f_permute (.x(x[round]), .rc(iota_consts[round]), .y(y[round]));
         end
     endgenerate
     assign next_state = y[n-1];

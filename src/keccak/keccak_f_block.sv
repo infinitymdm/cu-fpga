@@ -23,10 +23,10 @@ module keccak_f_block #(
     endgenerate
 
     // Perform a single round of the sponge function
-    keccak_theta #(.w) theta (.x(x_block), .y(x_theta));
-    keccak_rho   #(.w) rho   (.x(x_theta), .y(x_rho));
-    keccak_pi    #(.w) pi    (.x(x_rho),   .y(x_pi));
-    keccak_chi   #(.w) chi   (.x(x_pi),    .y(x_chi));
-    keccak_iota  #(.w) iota  (.x(x_chi),   .y(y_block), .rc);
+    keccak_theta #(w) theta (.x(x_block), .y(x_theta));
+    keccak_rho   #(w) rho   (.x(x_theta), .y(x_rho));
+    keccak_pi    #(w) pi    (.x(x_rho),   .y(x_pi));
+    keccak_chi   #(w) chi   (.x(x_pi),    .y(x_chi));
+    keccak_iota  #(w) iota  (.x(x_chi),   .y(y_block), .rc);
 
 endmodule

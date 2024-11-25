@@ -10,7 +10,7 @@ module tb_sha3;
     bit [r-1:0] message;
     bit [d-1:0] digest;
 
-    keccak #(.d) dut (
+    keccak #(d) dut (
         .clk, .reset, .enable,
         .message, .digest
     );
@@ -41,11 +41,13 @@ module tb_sha3;
 
     task automatic read_message_chunk (input int m_file, output bit [r-1:0] m);
         int pad_count = 0;
+        byte c;
         byte message_byte;
         for (int i = 0; i < r/8; i++) begin: get_message_byte
-            if (!$feof(m_file)) begin: read_byte
+            c = $fgetc(m_file);
+            if (c != -1) begin: read_byte
                 // Read as long as there are bytes
-                $fread(message_byte, m_file);
+                message_byte = c;
                 // $display("Read byte: %h", message_byte);
             end else begin: pad_byte
                 // Once out of bytes to read, pad according to SHA3
