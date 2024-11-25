@@ -1,9 +1,9 @@
-module tb_sha3 ();
+module tb_sha3;
 
     localparam d = 256;
     localparam r = 1600 - 2*d;
 
-    string message_file_name = "/home/marcus/Pictures/wallpapers/Pines.jpg";
+    string message_file_name = "../docs/alchitry_cu_sch.pdf";
     int message_file;
 
     bit clk, reset, enable;

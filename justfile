@@ -40,7 +40,7 @@ pnr design: (synth design)
 upload design: (pnr design)
     iceprog {{synth_dir}}/{{dev_name}}_{{design}}.bin
 
-# Simulate the design against a testbench using verilator
+# Simulate a testbench using verilator
 sim design *FLAGS: _prep
     verilator --binary --timing --trace --Mdir {{build_dir}} -Wno-lint {{FLAGS}} -j `nproc` {{include_dirs}} --top {{design}} `find -name {{design}}.sv`
     make -C {{build_dir}} -f V{{design}}.mk V{{design}}
@@ -49,6 +49,12 @@ sim design *FLAGS: _prep
 run design *FLAGS:
     cp {{build_dir}}/V{{design}} {{sim_dir}}/.
     cd {{sim_dir}} && ./V{{design}} {{FLAGS}}
+
+# Simulate a testbench using QuestaSim
+questasim *FLAGS: _prep
+    vlog -lint -work {{sim_dir}} {{FLAGS}} src/keccak/keccak_theta.sv src/keccak/keccak_rho.sv src/keccak/keccak_pi.sv src/keccak/keccak_chi.sv src/keccak/keccak_iota.sv src/keccak/keccak_f_block.sv
+    # src/keccak/keccak.sv tb/tb_sha3.sv
+    vsim -lib {{sim_dir}} tb_sha3
 
 # View simulation waveforms
 view:
@@ -59,6 +65,7 @@ lint design *FLAGS:
     verilator --lint-only --timing -Wall {{FLAGS}} {{include_dirs}} {{src_sv}} --top {{design}} `find -name {{design}}.sv`
 
 clean:
+    rm -f transcript
     rm -rf {{synth_dir}}
     rm -rf {{build_dir}}
     rm -rf {{sim_dir}}
