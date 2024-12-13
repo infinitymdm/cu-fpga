@@ -14,10 +14,8 @@ module keccak_f_block #(
     generate
         for (genvar i = 0; i < 5; i++) begin: sheet_select
             for (genvar j = 0; j < 5; j++) begin: lane_select
-                for (genvar k = 0; k < w; k++) begin: bit_select
-                    assign x_block[i][j][k] = x[w*(5*j + i) + k];
-                    assign y[w*(5*j + i) + k] = y_block[i][j][k];
-                end
+                assign x_block[i][j] = x[w*(i+5*j)+:w];
+                assign y[w*(i+5*j)+:w] = y_block[i][j];
             end
         end
     endgenerate
@@ -28,5 +26,9 @@ module keccak_f_block #(
     keccak_pi    #(w) pi    (.x(x_rho),   .y(x_pi));
     keccak_chi   #(w) chi   (.x(x_pi),    .y(x_chi));
     keccak_iota  #(w) iota  (.x(x_chi),   .y(y_block), .rc);
+
+    // always @(x_pi)   $display("Theta / Rho / Pi:\n%h", x_pi);
+    // always @(x_chi)  $display("Chi:\n%h", x_chi);
+    // always @(y_block) $display("Iota:\n%h\n", y_block);
 
 endmodule

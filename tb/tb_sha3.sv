@@ -1,9 +1,10 @@
 module tb_sha3;
 
-    localparam d = 256;
+    localparam d = 512;
     localparam r = 1600 - 2*d;
 
-    string message_file_name = "../docs/alchitry_cu_sch.pdf";
+    string message_file_name = "../tb/sha3_test.bin";
+    string expected_digest = "";
     int message_file;
 
     bit clk, reset, enable;
@@ -25,9 +26,6 @@ module tb_sha3;
         enable = 1'b0;
         reset = 1'b1;
         message = '0;
-        #10;
-        reset = 1'b0;
-        enable = 1'b1;
     end
     always #5 clk <= ~clk;
 
@@ -45,7 +43,7 @@ module tb_sha3;
         byte message_byte;
         for (int i = 0; i < r/8; i++) begin: get_message_byte
             c = $fgetc(m_file);
-            if (c != -1) begin: read_byte
+            if (!$feof(m_file)) begin: read_byte
                 // Read as long as there are bytes
                 message_byte = c;
                 // $display("Read byte: %h", message_byte);
@@ -64,12 +62,15 @@ module tb_sha3;
     endtask
 
     always @(posedge clk) begin: stimulate_dut
-        $display("digest: %h", digest);
+        // $display("digest: %h", digest);
         if (!$feof(message_file)) begin: get_message
             read_message_chunk(message_file, message);
+            reset = 1'b0;
+            enable = 1'b1;
             $display("Message chunk: %h", message);
         end else begin: handle_eof
-            $display("Result: %h", digest);
+            $display("Result:   %h", digest);
+            $display("Expected: %s", expected_digest);
             $fclose(message_file);
             $finish;
         end

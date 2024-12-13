@@ -56,6 +56,12 @@ module keccak #(
     );
 
     // Perform the keccak sponge function to compute the next state
+    always @(x[0]) begin: disp_always
+        if (!reset) begin: disp_stuff
+            $display("x:\n%h", x[0]);
+            $display("Theta / Rho / Pi:\n%h", keccak_round[0].f_permute.x_pi);
+        end
+    end
     generate
         for (genvar round = 0; round < n; round++) begin: keccak_round
             if (round == 0) begin: keccak_round_0
@@ -70,7 +76,7 @@ module keccak #(
 
     // Output is sponge output after absorbing the full message
     // Technically this only works for SHA3 stuff, since r > d in all certified configurations
-    // FIXME: for cases r < d, register sponge outputs so we can fill up all bits of the digest
+    // FIXME: for cases r < d, shift in sponge outputs
     assign digest = next_state[c+:d];
 
 endmodule
