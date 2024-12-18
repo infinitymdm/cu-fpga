@@ -59,7 +59,17 @@ module keccak #(
     always @(x[0]) begin: disp_always
         if (!reset) begin: disp_stuff
             $display("x:\n%h", x[0]);
-            $display("Theta / Rho / Pi:\n%h", keccak_round[0].f_permute.x_pi);
+            $display("Theta / Rho:");
+            for (int i = 0; i < 5; i++) begin: i_theta_rho_pi
+                for (int j = 0; j < 5; j++) begin: j_theta_rho_pi
+                    $display("T: %b", keccak_round[0].f_permute.x_theta[4-i][4-j]);
+                    $display("   %b", keccak_round[0].f_permute.rho.A[5*(4-j)+(4-i)]);
+                    $display("   %b", keccak_round[0].f_permute.rho.B[5*(4-j)+(4-i)]);
+                    $display("R: %b (%02d)\n", keccak_round[0].f_permute.x_rho[4-i][4-j], keccak_round[0].f_permute.rho.rho_offsets[5*(4-j)+(4-i)]%w);
+                end
+            end
+            $display("Rho:\n%h", keccak_round[0].f_permute.x_rho);
+            $display("Theta / Rho / Pi:\n%h\n", keccak_round[0].f_permute.x_pi);
         end
     end
     generate

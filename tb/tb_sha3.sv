@@ -46,7 +46,6 @@ module tb_sha3;
             if (!$feof(m_file)) begin: read_byte
                 // Read as long as there are bytes
                 message_byte = c;
-                // $display("Read byte: %h", message_byte);
             end else begin: pad_byte
                 // Once out of bytes to read, pad according to SHA3
                 pad_count++;
