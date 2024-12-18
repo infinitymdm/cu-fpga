@@ -15,7 +15,7 @@ module keccak_rho #(
     };
 
     generate
-        // This generate block contains no combinational content, just address manipulation
+        // This generate block contains no combinational content, just index manipulation
         // In synthesis it should be optimized to straight wires
         for (genvar i = 0; i < 5; i++) begin: sheet_select
             for (genvar j = 0; j < 5; j++) begin: lane_select

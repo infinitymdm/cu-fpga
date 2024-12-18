@@ -8,7 +8,7 @@ module keccak_pi #(
     generate
         for (genvar i = 0; i < 5; i++) begin: sheet_select
             for(genvar j = 0; j < 5; j++) begin: lane_select
-                assign y[i][j] = x[(i+3*j)%5][i];
+                assign y[(2*i+3*j+4)%5][j] = x[i][j];
             end
         end
     endgenerate
