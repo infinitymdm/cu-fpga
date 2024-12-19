@@ -11,7 +11,7 @@ sim_dir := 'sim'
 
 # parse source files
 constraints := `find constraints -name "*.pcf" | tr '\n' ' '`
-include_dirs := `find {src,tb,include} -name '*.sv*' -printf '-I%h\n' | sort -u | tr '\n' ' '`
+include_dirs := `find {src,tb} -name '*.sv*' -printf '-I%h\n' | sort -u | tr '\n' ' '`
 # include_sv := `find include -name 'uvm_pkg.sv' | tr '\n' ' '`
 src_sv := `find src -name "*.sv" | tr '\n' ' '`
 tb_sv := `find tb -name "*.sv" | tr '\n' ' '`

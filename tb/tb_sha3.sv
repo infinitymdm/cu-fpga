@@ -4,7 +4,7 @@ module tb_sha3;
     localparam r = 1600 - 2*d;
 
     string message_file_name = "../tb/sha3_test.bin";
-    string expected_digest = "";
+    string expected_digest = "ed782b5e7cb057cf2687da36dd6dae781c9412e7ced155706c080e8382e20b6bc6039fcc9bda5340587e97df2c6a19d4dc8aac0ecc41ad38a3d029fe06484428";
     int message_file;
 
     bit clk, reset, enable;
@@ -50,10 +50,10 @@ module tb_sha3;
                 // Once out of bytes to read, pad according to SHA3
                 pad_count++;
                 case ({pad_count == 1, i == r/8-1})
-                    2'b00: message_byte = 8'b00000000;
-                    2'b01: message_byte = 8'b00000001;
-                    2'b10: message_byte = 8'b01100000;
-                    2'b11: message_byte = 8'b01100001;
+                    2'b00: message_byte = 8'h00;
+                    2'b01: message_byte = 8'h80;
+                    2'b10: message_byte = 8'h06;
+                    2'b11: message_byte = 8'h86;
                 endcase
             end
             m = {m[r-9:0], message_byte};
@@ -61,10 +61,9 @@ module tb_sha3;
     endtask
 
     always @(posedge clk) begin: stimulate_dut
-        // $display("digest: %h", digest);
         if (!$feof(message_file)) begin: get_message
-            read_message_chunk(message_file, message);
             reset = 1'b0;
+            read_message_chunk(message_file, message);
             enable = 1'b1;
             $display("Message chunk: %h", message);
         end else begin: handle_eof
@@ -73,6 +72,11 @@ module tb_sha3;
             $fclose(message_file);
             $finish;
         end
+    end
+
+    always @(negedge clk) begin: read_dut_response
+        dut.displayblk("state:", dut.state);
+        $display("digest: %h\n", digest);
     end
 
 endmodule

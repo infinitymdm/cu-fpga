@@ -67,27 +67,10 @@ module keccak #(
     );
 
     // Perform the keccak sponge function to compute the next state
-    always @(x[0]) begin: disp_on_message_change
-        if (!reset) begin: disp_if_enabled
-            $display("x (%02d): %h", 0, x[0]);
-            displayblk("Pi:", keccak_round[0].f_permute.x_pi);
-            displayblk("Chi:", keccak_round[0].f_permute.x_chi);
-            $display("RC: %h", keccak_round[0].f_permute.rc);
-            $display("y (%02d): %h\n", 0, y[0]);
-            
-            $display("x (%02d): %h", 1, x[1]);
-            displayblk("Pi:", keccak_round[1].f_permute.x_pi);
-            displayblk("Chi:", keccak_round[1].f_permute.x_chi);
-            $display("RC: %h", keccak_round[1].f_permute.rc);
-            $display("y (%02d): %h\n", 1, y[1]);
-
-            $display("...\n");
-
-            $display("x (%02d): %h", 23, x[23]);
-            displayblk("Pi:", keccak_round[23].f_permute.x_pi);
-            displayblk("Chi:", keccak_round[23].f_permute.x_chi);
-            $display("RC: %h", keccak_round[23].f_permute.rc);
-            $display("y (%02d): %h\n", 23, y[23]);
+    always @(message) begin: disp_on_message_change
+        if (!reset) begin: disp_stuff
+            displayblk("x(0):", x[0]);
+            displayblk("y(23):", y[23]);
         end
     end
     generate
@@ -105,6 +88,6 @@ module keccak #(
     // Output is sponge output after absorbing the full message
     // Technically this only works for SHA3 stuff, since r > d in all certified configurations
     // FIXME: for cases r < d, shift in sponge outputs
-    assign digest = next_state[c+:d];
+    assign digest = state[b-1-:d];
 
 endmodule
