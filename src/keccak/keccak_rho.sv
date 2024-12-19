@@ -23,16 +23,11 @@ module keccak_rho #(
                     assign y[i][j] = x[i][j];
                 end else begin: rotate_n
                     for (genvar k = 0; k < w/8; k++) begin: byte_flip_A
-                        // TODO: See if we can use stream operators here to simplify the logic a bit (also below)
-                        for (genvar p = 0; p < 8; p++) begin: bit_select_A
-                            assign A[5*j+i][8*k+7-p] = x[i][j][8*k+p]; // reverse the bit order of each byte
-                        end
+                        assign A[5*j+i][8*k+:8] = {<<1{x[i][j][8*k+:8]}}; // reverse the bit order of each byte
                     end
                     assign B[5*j+i] = {A[5*j+i][(rho_offsets[5*j+i]%w)-1:0], A[5*j+i][w-1:(rho_offsets[5*j+i]%w)]}; // rol
                     for (genvar m = 0; m < w/8; m++) begin: byte_flip_B
-                        for (genvar q = 0; q < 8; q++) begin: bit_select_B
-                            assign y[i][j][8*m+7-q] = B[5*j+i][8*m+q]; // restore bit order of each byte
-                        end
+                        assign y[i][j][8*m+:8] = {<<1{B[5*j+i][8*m+:8]}};
                     end
                 end
             end

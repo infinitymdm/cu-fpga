@@ -68,9 +68,8 @@ module keccak #(
 
     // Perform the keccak sponge function to compute the next state
     always @(message) begin: disp_on_message_change
-        if (!reset) begin: disp_stuff
-            displayblk("x(0):", x[0]);
-            displayblk("y(23):", y[23]);
+        if (!reset) begin: disp_next_state
+            displayblk("next state:", y[23]);
         end
     end
     generate
