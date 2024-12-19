@@ -9,8 +9,8 @@ module keccak_iota #(
     generate
         for (genvar i = 0; i < 5; i++) begin: sheet_select
             for (genvar j = 0; j < 5; j++) begin: lane_select
-                if ((i == 0) & (j == 0)) begin: apply_rc
-                    assign y[i][j] = x[i][j] ^ rc;
+                if ((i == 4) & (j == 4)) begin: apply_rc
+                    assign y[i][j] = x[i][j] ^ {<<8{rc}};
                 end else begin: passthrough
                     assign y[i][j] = x[i][j];
                 end

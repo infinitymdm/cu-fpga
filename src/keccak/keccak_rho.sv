@@ -23,6 +23,7 @@ module keccak_rho #(
                     assign y[i][j] = x[i][j];
                 end else begin: rotate_n
                     for (genvar k = 0; k < w/8; k++) begin: byte_flip_A
+                        // TODO: See if we can use stream operators here to simplify the logic a bit (also below)
                         for (genvar p = 0; p < 8; p++) begin: bit_select_A
                             assign A[5*j+i][8*k+7-p] = x[i][j][8*k+p]; // reverse the bit order of each byte
                         end
