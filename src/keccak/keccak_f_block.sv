@@ -8,7 +8,7 @@ module keccak_f_block #(
     output logic [b-1:0] y
 );
 
-    logic [4:0][4:0][w-1:0] x_block, x_theta, x_rho, x_pi, x_chi, y_block;
+    logic [4:0][4:0][w-1:0] x_block, /*x_theta, x_rho,*/ x_pi, x_chi, y_block;
 
     // Reorganize i/o into 3-dimensional blocks for easy indexing in keccak subfunctions
     generate
@@ -21,14 +21,11 @@ module keccak_f_block #(
     endgenerate
 
     // Perform a single round of the sponge function
-    keccak_theta #(w) theta (.x(x_block), .y(x_theta));
-    keccak_rho   #(w) rho   (.x(x_theta), .y(x_rho));
-    keccak_pi    #(w) pi    (.x(x_rho),   .y(x_pi));
-    keccak_chi   #(w) chi   (.x(x_pi),    .y(x_chi));
-    keccak_iota  #(w) iota  (.x(x_chi),   .y(y_block), .rc);
-
-    // always @(x_pi)   $display("Theta / Rho / Pi:\n%h", x_pi);
-    // always @(x_chi)  $display("Chi:\n%h", x_chi);
-    // always @(y_block) $display("Iota:\n%h\n", y_block);
+    // keccak_theta #(w) theta (.x(x_block), .y(x_theta));
+    // keccak_rho   #(w) rho   (.x(x_theta), .y(x_rho));
+    // keccak_pi    #(w) pi    (.x(x_rho),   .y(x_pi));
+    keccak_theta_rho_pi #(w) thrhp (.x(x_block), .y(x_pi));
+    keccak_chi          #(w) chi   (.x(x_pi),    .y(x_chi));
+    keccak_iota         #(w) iota  (.x(x_chi),   .y(y_block), .rc);
 
 endmodule
