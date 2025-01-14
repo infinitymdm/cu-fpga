@@ -26,17 +26,17 @@ _prep:
     mkdir -p {{synth_dir}}
     mkdir -p {{sim_dir}}
 
-# Synthesize the design
+# Synthesize a design
 synth design: _prep
     yosys -q -p 'synth_ice40 -top {{design}} -json {{synth_dir}}/{{dev_name}}_{{design}}.json' {{src_sv}}
 
-# Place and route the design
+# Place and route a design
 pnr design: (synth design)
     nextpnr-ice40 --{{dev_family}} --package {{dev_model}} --json {{synth_dir}}/{{dev_name}}_{{design}}.json --pcf {{constraints}} --asc {{synth_dir}}/{{dev_name}}_{{design}}.asc
     icetime -d {{dev_family}} -mtr {{synth_dir}}/{{dev_name}}_{{design}}.rpt {{synth_dir}}/{{dev_name}}_{{design}}.asc
     icepack {{synth_dir}}/{{dev_name}}_{{design}}.asc {{synth_dir}}/{{dev_name}}_{{design}}.bin
 
-# Upload the design to the FPGA
+# Upload a design to the FPGA
 upload design: (pnr design)
     iceprog {{synth_dir}}/{{dev_name}}_{{design}}.bin
 
@@ -46,6 +46,7 @@ sim design *FLAGS: _prep
     make -C {{build_dir}} -f V{{design}}.mk V{{design}}
     just run {{design}}
 
+# Run simulation on a previously verilated testbench
 run design *FLAGS:
     cp {{build_dir}}/V{{design}} {{sim_dir}}/.
     cd {{sim_dir}} && ./V{{design}} {{FLAGS}}
