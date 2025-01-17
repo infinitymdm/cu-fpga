@@ -10,7 +10,7 @@ module tb_sha3;
     bit [r-1:0] message;
     bit [d-1:0] digest;
 
-    keccak #(d) dut (
+    keccak #(d, 6, 1) dut (
         .clk, .reset, .enable,
         .message, .digest
     );
