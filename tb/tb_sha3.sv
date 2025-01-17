@@ -5,12 +5,13 @@ module tb_sha3;
 
     string message_file_name = "../tb/sha3_test.bin";
     int message_file;
+    bit wait_cycle;
 
     bit clk, reset, enable;
     bit [r-1:0] message;
     bit [d-1:0] digest;
 
-    keccak #(d, 6, 1) dut (
+    keccak #(d, 6, 2) dut (
         .clk, .reset, .enable,
         .message, .digest
     );
@@ -25,6 +26,7 @@ module tb_sha3;
         enable = 1'b0;
         reset = 1'b1;
         message = '0;
+        wait_cycle = 1'b1;
     end
     always #5 clk <= ~clk;
 
@@ -62,10 +64,14 @@ module tb_sha3;
     always @(posedge clk) begin: stimulate_dut
         if (!$feof(message_file)) begin: get_message
             reset = 1'b0;
-            read_message_chunk(message_file, message);
-            enable = 1'b1;
+            if (!wait_cycle) begin: read_chunk
+                read_message_chunk(message_file, message);
+                enable = 1'b1;
+            end
             $display("Message chunk: %h", message);
+            wait_cycle = !wait_cycle;
         end else begin: handle_eof
+            #10;
             enable = 1'b0;
             #1;
             $display("Result:        %h", digest);
