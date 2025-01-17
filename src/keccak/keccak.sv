@@ -22,6 +22,7 @@ module keccak #(
     // TODO: implement the below
     // - SHA3 and SHAKE suffixes
     // - padding function
+    // - iota_const generation
 
     // Note: These work for all SHA3/SHAKE algorithms (i.e., where l=6).
     // See FIPS202 section 3.2.5 for details on how to generate constants for l!=6.
@@ -79,9 +80,5 @@ module keccak #(
         .y
     );
     assign digest = y[b-1-:d];
-
-    // debug
-    // FIXME: Code works when I have this $display, but gives the wrong result otherwise
-    always @(message) $display("next y: %h", y);
 
 endmodule

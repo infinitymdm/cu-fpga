@@ -66,6 +66,8 @@ module tb_sha3;
             enable = 1'b1;
             $display("Message chunk: %h", message);
         end else begin: handle_eof
+            enable = 1'b0;
+            #1;
             $display("Result:        %h", digest);
             $fclose(message_file);
             $finish;
