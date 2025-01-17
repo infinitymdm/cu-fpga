@@ -1,6 +1,6 @@
 module keccak #(
     parameter d = 512,      // digest length in bits
-    parameter l = 6,        // log base 2 of the lane size.
+    parameter l = 6,        // log base 2 of the lane size. Use l=6 for all SHA3/SHAKE ops.
     parameter s = 6,        // number of stages (i.e. number of cycles for one sponge operation)
     parameter w = 2**l,     // lane size (i.e. word length)
     parameter b = 25*w,     // keccak permutation width (i.e. state vector length)
