@@ -1,3 +1,10 @@
+// top_alu.sv
+// Implements a proof-of-concept 24-hour clock. Counts at (very roughly) 1 minute per second.
+// Features:
+//  - Displays the hour and minute on the Alchitry Io board's 7-segment displays
+//  - The counter can be decremented by holding down the "south" button on the Io D-pad
+//  - The counter can be reset by pressing the Cu's reset button
+
 module top_7seg_clock (
   input  logic io_btn_s, cu_btn_reset, cu_clk,
   output logic [3:0] io_7seg_s,

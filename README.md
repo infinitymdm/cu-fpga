@@ -9,11 +9,12 @@ This repo was inspired by (and originally forked from) https://github.com/codysn
 
 ## Getting started
 
-There are a couple software dependencies you'll need to have installed in order to use the flows in this repo.
-For simulation you'll just need a couple things:
+There are a couple software dependencies you'll need to have installed in order to use the flows
+in this repo. For simulation you'll just need a couple things:
 
 - [verilator](https://github.com/verilator/verilator) for simulation
 - [just](https://github.com/casey/just) for running flows (see the justfile)
+- [gtkwave](https://github.com/gtkwave/gtkwave) (optional) if you want to view waveforms using `just view`
 
 If you want to be able to program your FPGA, you'll need the following as well:
 
@@ -22,3 +23,11 @@ If you want to be able to program your FPGA, you'll need the following as well:
 - [icestorm](https://github.com/YosysHQ/icestorm) for working with the Lattice iCE40 FPGA in the Alchitry Cu
 
 Once you've got those taken care of, you can run `just --list` to see available recipes.
+
+## Organization
+
+- `constriants` contains I/O mappings for the Alchitry Cu and Io.
+- `docs` contains schematics for the Alchitry Cu and Io.
+- `src` contains SystemVerilog source code, plus a few README files with documentation.
+- `tb` contains testbenches and other test-related files.
+- `top` contains toplevel designs that are ready to be loaded onto an FPGA.

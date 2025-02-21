@@ -1,30 +1,32 @@
 # configuration
-dev_name := 'alchitry_cu'
-dev_family := 'hx8k'
-dev_model := 'cb132'
+dev_name :=     'alchitry_cu'
+dev_family :=   'hx8k'
+dev_model :=    'cb132'
 
 # dirs
-tb_dir := 'tb'
-synth_dir := 'synth'
-build_dir := 'build'
-sim_dir := 'sim'
+tb_dir :=       'tb'
+synth_dir :=    'synth'
+build_dir :=    'build'
+sim_dir :=      'sim'
 
 # parse source files
 constraints := `find constraints -name "*.pcf" | tr '\n' ' '`
 include_dirs := `find {src,tb} -name '*.sv*' -printf '-I%h\n' | sort -u | tr '\n' ' '`
-# include_sv := `find include -name 'uvm_pkg.sv' | tr '\n' ' '`
 src_sv := `find src -name "*.sv" | tr '\n' ' '`
-tb_sv := `find tb -name "*.sv" | tr '\n' ' '`
-
 
 _default:
     @just --list
 
 # Create a build directory
 _prep:
-    mkdir -p {{build_dir}}
-    mkdir -p {{synth_dir}}
-    mkdir -p {{sim_dir}}
+    @mkdir -p {{build_dir}}
+    @mkdir -p {{synth_dir}}
+    @mkdir -p {{sim_dir}}
+
+# Convert a systemverilog design to verilog
+preprocess design: _prep
+    # TODO
+    echo "Not Implemented"
 
 # Synthesize a design
 synth design: _prep
@@ -40,10 +42,17 @@ pnr design: (synth design)
 upload design: (pnr design)
     iceprog {{synth_dir}}/{{dev_name}}_{{design}}.bin
 
-# Simulate a testbench using verilator
-sim design *FLAGS: _prep
-    verilator --binary --timing --trace --Mdir {{build_dir}} -Wno-lint {{FLAGS}} -j `nproc` {{include_dirs}} --top {{design}} `find -name {{design}}.sv`
-    make -C {{build_dir}} -f V{{design}}.mk V{{design}}
+# Verilate a testbench
+verilate design *FLAGS: _prep
+    verilator --binary --timing --trace -Wno-lint \
+        -MAKEFLAGS "--silent" \
+        --Mdir {{build_dir}} \
+        {{FLAGS}} \
+        -j `nproc` \
+        {{include_dirs}} \
+        --top {{design}} \
+        `find -name {{design}}.sv`
+    make --silent -C {{build_dir}} -f V{{design}}.mk V{{design}}
     just run {{design}}
 
 # Run simulation on a previously verilated testbench
