@@ -18,11 +18,16 @@ in this repo. For simulation you'll just need a couple things:
 
 If you want to be able to program your FPGA, you'll need the following as well:
 
+- [sv2v](https://github.com/zachjs/sv2v) for SystemVerilog to Verilog conversion
 - [yosys](https://github.com/YosysHQ/yosys) for synthesis
 - [nextpnr](https://github.com/YosysHQ/nextpnr) (in the iCE40 flavor) for place & route
 - [icestorm](https://github.com/YosysHQ/icestorm) for working with the Lattice iCE40 FPGA in the Alchitry Cu
 
 Once you've got those taken care of, you can run `just --list` to see available recipes.
+
+> Note: The recipes in the justfile will probably also work for other Lattice iCE40-based FPGAs.
+Feel free to fiddle with the `dev_*` parameters at the top of the justfile to get things working
+with your device.
 
 ## Organization
 
