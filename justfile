@@ -16,7 +16,6 @@ _default:
     @just --list
 
 _prep:
-    @just hdl::_prep
     @mkdir -p {{synth_dir}}
 
 # Clean up generated files
@@ -25,8 +24,8 @@ clean:
     rm -rf {{synth_dir}}
 
 # Synthesize a design
-synth design *SV2V_FLAGS:
-    @just hdl::preprocess {{design}} {{SV2V_FLAGS}} `find ~+/top {{design}}.sv`
+synth design *SV2V_FLAGS: _prep
+    @just hdl::preprocess {{design}} {{SV2V_FLAGS}} `find ~+/top -name {{design}}.sv`
     yosys -q -p 'synth_ice40 -top {{design}} -json {{synth_dir}}/{{dev_name}}_{{design}}.json' `find . -name "*.v" | tr '\n' ' '`
 
 # Place and route a design
